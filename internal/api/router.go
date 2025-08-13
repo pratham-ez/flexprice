@@ -397,6 +397,7 @@ func NewRouter(handlers Handlers, cfg *config.Configuration, logger *logger.Logg
 		{
 			integration.POST("/sync/:entity_type/:entity_id", handlers.Integration.SyncEntityToProviders)
 			integration.GET("/providers", handlers.Integration.GetAvailableProviders)
+			integration.POST("/connect-customer", handlers.Integration.ConnectCustomerToProvider)
 			// Coupon routes
 			coupon := v1Private.Group("/coupons")
 			{

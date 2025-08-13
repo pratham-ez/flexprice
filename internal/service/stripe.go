@@ -869,3 +869,48 @@ func (s *StripeService) GetPaymentStatusByPaymentIntent(ctx context.Context, pay
 		Metadata:  paymentIntent.Metadata,
 	}, nil
 }
+
+// ValidateStripeCustomer validates that a Stripe customer exists with the given ID
+func (s *StripeService) ValidateStripeCustomer(ctx context.Context, stripeCustomerID string) (*stripe.Customer, error) {
+	// Get Stripe connection for this environment
+	conn, err := s.ConnectionRepo.GetByProvider(ctx, types.SecretProviderStripe)
+	if err != nil {
+		return nil, ierr.NewError("failed to get Stripe connection").
+			WithHint("Stripe connection not configured for this environment").
+			Mark(ierr.ErrNotFound)
+	}
+
+	// Get Stripe configuration
+	stripeConfig, err := s.GetDecryptedStripeConfig(conn)
+	if err != nil {
+		return nil, ierr.NewError("failed to get Stripe configuration").
+			WithHint("Invalid Stripe configuration").
+			Mark(ierr.ErrValidation)
+	}
+
+	// Initialize Stripe client
+	stripeClient := &client.API{}
+	stripeClient.Init(stripeConfig.SecretKey, nil)
+
+	// Get the customer from Stripe
+	customer, err := stripeClient.Customers.Get(stripeCustomerID, nil)
+	if err != nil {
+		s.Logger.Errorw("failed to get Stripe customer",
+			"error", err,
+			"stripe_customer_id", stripeCustomerID)
+		return nil, ierr.NewError("Stripe customer not found").
+			WithHint("The provided Stripe customer ID does not exist").
+			WithReportableDetails(map[string]interface{}{
+				"stripe_customer_id": stripeCustomerID,
+				"error":              err.Error(),
+			}).
+			Mark(ierr.ErrNotFound)
+	}
+
+	s.Logger.Infow("successfully validated Stripe customer",
+		"stripe_customer_id", stripeCustomerID,
+		"customer_email", customer.Email,
+		"customer_name", customer.Name)
+
+	return customer, nil
+}

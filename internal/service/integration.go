@@ -24,6 +24,9 @@ type IntegrationService interface {
 
 	// GetAvailableProviders returns all available providers for the current tenant
 	GetAvailableProviders(ctx context.Context) ([]*connection.Connection, error)
+
+	// ConnectCustomerToProvider connects an existing FlexPrice customer to an existing provider customer
+	ConnectCustomerToProvider(ctx context.Context, req dto.ConnectCustomerToProviderRequest) (*dto.ConnectCustomerToProviderResponse, error)
 }
 
 type integrationService struct {
@@ -536,4 +539,183 @@ func (s *integrationService) findCustomerByEmail(ctx context.Context, email stri
 	}
 
 	return nil, nil // No customer found
+}
+
+// ConnectCustomerToProvider connects an existing FlexPrice customer to an existing provider customer
+func (s *integrationService) ConnectCustomerToProvider(ctx context.Context, req dto.ConnectCustomerToProviderRequest) (*dto.ConnectCustomerToProviderResponse, error) {
+	// Validate the request
+	if err := req.Validate(); err != nil {
+		return nil, err
+	}
+
+	s.Logger.Infow("connecting customer to provider",
+		"customer_id", req.CustomerID,
+		"provider_customer_id", req.ProviderCustomerID,
+		"provider_type", req.ProviderType)
+
+	// Use database transaction to ensure atomicity
+	var response *dto.ConnectCustomerToProviderResponse
+	err := s.DB.WithTx(ctx, func(txCtx context.Context) error {
+		// 1. Check if there is a published provider connection available for this tenant in this environment
+		// Use the repository directly to check for connections
+		connectionFilter := &types.ConnectionFilter{
+			ProviderType: types.SecretProvider(req.ProviderType),
+		}
+		connections, err := s.ConnectionRepo.List(txCtx, connectionFilter)
+		if err != nil {
+			return err
+		}
+
+		var activeConnection *connection.Connection
+		for _, conn := range connections {
+			if conn.Status == types.StatusPublished {
+				activeConnection = conn
+				break
+			}
+		}
+
+		if activeConnection == nil {
+			return ierr.NewError("no published provider connection available").
+				WithHint(fmt.Sprintf("No published %s connection found for this tenant in this environment", req.ProviderType)).
+				WithReportableDetails(map[string]interface{}{
+					"provider_type":  req.ProviderType,
+					"tenant_id":      types.GetTenantID(txCtx),
+					"environment_id": types.GetEnvironmentID(txCtx),
+				}).
+				Mark(ierr.ErrNotFound)
+		}
+
+		// 2. Check if the customer exists in FlexPrice
+		customerService := NewCustomerService(s.ServiceParams)
+		customerResp, err := customerService.GetCustomer(txCtx, req.CustomerID)
+		if err != nil {
+			return ierr.NewError("customer not found in FlexPrice").
+				WithHint("The provided customer ID does not exist in FlexPrice").
+				WithReportableDetails(map[string]interface{}{
+					"customer_id": req.CustomerID,
+				}).
+				Mark(ierr.ErrNotFound)
+		}
+		customer := customerResp.Customer
+
+		// 3. Check if that customer already has provider customer ID in metadata
+		providerMetadataKey := fmt.Sprintf("%s_customer_id", req.ProviderType)
+		if existingProviderID, exists := customer.Metadata[providerMetadataKey]; exists && existingProviderID != "" {
+			return ierr.NewError("customer already has provider customer ID").
+				WithHint(fmt.Sprintf("Customer already has %s customer ID in metadata", req.ProviderType)).
+				WithReportableDetails(map[string]interface{}{
+					"customer_id":          req.CustomerID,
+					"existing_provider_id": existingProviderID,
+					"new_provider_id":      req.ProviderCustomerID,
+					"provider_type":        req.ProviderType,
+				}).
+				Mark(ierr.ErrAlreadyExists)
+		}
+
+		// 4. Validate the provider customer ID exists in the provider system
+		switch req.ProviderType {
+		case string(types.SecretProviderStripe):
+			stripeService := NewStripeService(s.ServiceParams)
+			_, err := stripeService.ValidateStripeCustomer(txCtx, req.ProviderCustomerID)
+			if err != nil {
+				return err
+			}
+		default:
+			return ierr.NewError("unsupported provider type").
+				WithHint(fmt.Sprintf("Provider type %s is not supported", req.ProviderType)).
+				Mark(ierr.ErrValidation)
+		}
+
+		// 5. Check if mapping already exists
+		entityMappingService := NewEntityIntegrationMappingService(s.ServiceParams)
+		mappingFilter := &types.EntityIntegrationMappingFilter{
+			EntityID:          req.CustomerID,
+			EntityType:        types.IntegrationEntityTypeCustomer,
+			ProviderTypes:     []string{req.ProviderType},
+			ProviderEntityIDs: []string{req.ProviderCustomerID},
+		}
+
+		existingMappings, err := entityMappingService.GetEntityIntegrationMappings(txCtx, mappingFilter)
+		if err == nil && existingMappings != nil && len(existingMappings.Items) > 0 {
+			return ierr.NewError("mapping already exists").
+				WithHint("A mapping between this customer and provider customer already exists").
+				WithReportableDetails(map[string]interface{}{
+					"customer_id":          req.CustomerID,
+					"provider_customer_id": req.ProviderCustomerID,
+					"provider_type":        req.ProviderType,
+					"existing_mapping_id":  existingMappings.Items[0].ID,
+				}).
+				Mark(ierr.ErrAlreadyExists)
+		}
+
+		// 6. Create entity integration mapping
+		createMappingReq := dto.CreateEntityIntegrationMappingRequest{
+			EntityID:         req.CustomerID,
+			EntityType:       types.IntegrationEntityTypeCustomer,
+			ProviderType:     req.ProviderType,
+			ProviderEntityID: req.ProviderCustomerID,
+			Metadata: map[string]interface{}{
+				"connection_method": "manual_api",
+				"connected_at":      time.Now().UTC().Format(time.RFC3339),
+			},
+		}
+
+		mappingResp, err := entityMappingService.CreateEntityIntegrationMapping(txCtx, createMappingReq)
+		if err != nil {
+			s.Logger.Errorw("failed to create entity mapping",
+				"customer_id", req.CustomerID,
+				"provider_type", req.ProviderType,
+				"provider_customer_id", req.ProviderCustomerID,
+				"error", err)
+			return err
+		}
+
+		// 7. Update customer metadata with provider customer ID
+		updateReq := dto.UpdateCustomerRequest{
+			Metadata: make(map[string]string),
+		}
+
+		// Merge with existing metadata
+		if customer.Metadata != nil {
+			for k, v := range customer.Metadata {
+				updateReq.Metadata[k] = v
+			}
+		}
+
+		// Add provider customer ID
+		updateReq.Metadata[providerMetadataKey] = req.ProviderCustomerID
+
+		_, err = customerService.UpdateCustomer(txCtx, customer.ID, updateReq)
+		if err != nil {
+			s.Logger.Errorw("failed to update customer metadata",
+				"customer_id", req.CustomerID,
+				"provider_type", req.ProviderType,
+				"error", err)
+			return err
+		}
+
+		s.Logger.Infow("customer connected to provider successfully",
+			"customer_id", req.CustomerID,
+			"provider_type", req.ProviderType,
+			"provider_customer_id", req.ProviderCustomerID,
+			"integration_mapping_id", mappingResp.ID)
+
+		// Build the response
+		response = &dto.ConnectCustomerToProviderResponse{
+			Message:              "Customer successfully connected to provider",
+			CustomerID:           req.CustomerID,
+			ProviderCustomerID:   req.ProviderCustomerID,
+			ProviderType:         req.ProviderType,
+			IntegrationMappingID: mappingResp.ID,
+			Mapping:              mappingResp,
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return response, nil
 }

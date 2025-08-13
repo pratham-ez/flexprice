@@ -34,7 +34,28 @@ type EntityIntegrationMappingResponse struct {
 // ListEntityIntegrationMappingsResponse represents the response for listing entity integration mappings
 type ListEntityIntegrationMappingsResponse = types.ListResponse[*EntityIntegrationMappingResponse]
 
+// ConnectCustomerToProviderRequest represents the request to connect a customer to an existing provider customer
+type ConnectCustomerToProviderRequest struct {
+	CustomerID         string `json:"customer_id" validate:"required,max=255"`
+	ProviderCustomerID string `json:"provider_customer_id" validate:"required,max=255"`
+	ProviderType       string `json:"provider_type" validate:"required,max=50"`
+}
+
+// ConnectCustomerToProviderResponse represents the response after connecting a customer to a provider
+type ConnectCustomerToProviderResponse struct {
+	Message              string                            `json:"message"`
+	CustomerID           string                            `json:"customer_id"`
+	ProviderCustomerID   string                            `json:"provider_customer_id"`
+	ProviderType         string                            `json:"provider_type"`
+	IntegrationMappingID string                            `json:"integration_mapping_id"`
+	Mapping              *EntityIntegrationMappingResponse `json:"mapping,omitempty"`
+}
+
 func (r *CreateEntityIntegrationMappingRequest) Validate() error {
+	return validator.ValidateRequest(r)
+}
+
+func (r *ConnectCustomerToProviderRequest) Validate() error {
 	return validator.ValidateRequest(r)
 }
 

@@ -126,3 +126,49 @@ func (h *IntegrationHandler) GetAvailableProviders(c *gin.Context) {
 		"total":     len(connections),
 	})
 }
+
+// ConnectCustomerToProvider godoc
+// @Summary Connect customer to existing provider customer
+// @Description Connect an existing FlexPrice customer to an existing provider customer ID
+// @Tags Integration
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param request body dto.ConnectCustomerToProviderRequest true "Connect customer request"
+// @Success 200 {object} dto.ConnectCustomerToProviderResponse
+// @Failure 400 {object} errors.ErrorResponse
+// @Failure 401 {object} errors.ErrorResponse
+// @Failure 404 {object} errors.ErrorResponse
+// @Failure 409 {object} errors.ErrorResponse
+// @Failure 500 {object} errors.ErrorResponse
+// @Router /integration/connect-customer [post]
+func (h *IntegrationHandler) ConnectCustomerToProvider(c *gin.Context) {
+	var req dto.ConnectCustomerToProviderRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		h.logger.Errorw("failed to bind request", "error", err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid request payload",
+		})
+		return
+	}
+
+	ctx := c.Request.Context()
+	response, err := h.IntegrationService.ConnectCustomerToProvider(ctx, req)
+	if err != nil {
+		h.logger.Errorw("failed to connect customer to provider",
+			"customer_id", req.CustomerID,
+			"provider_customer_id", req.ProviderCustomerID,
+			"provider_type", req.ProviderType,
+			"error", err)
+		c.Error(err)
+		return
+	}
+
+	h.logger.Infow("customer connected to provider successfully",
+		"customer_id", req.CustomerID,
+		"provider_customer_id", req.ProviderCustomerID,
+		"provider_type", req.ProviderType,
+		"integration_mapping_id", response.IntegrationMappingID)
+
+	c.JSON(http.StatusOK, response)
+}
