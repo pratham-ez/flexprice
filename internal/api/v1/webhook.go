@@ -16,6 +16,7 @@ import (
 	"github.com/flexprice/flexprice/internal/types"
 	"github.com/gin-gonic/gin"
 	"github.com/samber/lo"
+	"github.com/shopspring/decimal"
 	"github.com/stripe/stripe-go/v79"
 	"github.com/stripe/stripe-go/v79/client"
 )
@@ -512,7 +513,65 @@ func (h *WebhookHandler) handleCheckoutSessionCompleted(c *gin.Context, event *s
 	// Reconcile payment with invoice if payment succeeded or if payment was already succeeded
 	// This handles both new payments and duplicate payments that should result in overpayment
 	if paymentStatus == string(types.PaymentStatusSucceeded) || payment.PaymentStatus == types.PaymentStatusSucceeded {
-		if err := h.stripeService.ReconcilePaymentWithInvoice(c.Request.Context(), payment.ID, payment.Amount); err != nil {
+		// Validate amount and handle discounts before reconciliation
+		actualAmount, discountAmount, promotionCodeID, err := h.validatePaymentAmountWithDiscounts(session, payment, event.Data.Raw)
+		if err != nil {
+			h.logger.Errorw("payment amount validation failed",
+				"error", err,
+				"payment_id", payment.ID,
+				"session_id", session.ID,
+			)
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": "Payment amount validation failed",
+			})
+			return
+		}
+
+		// Update payment with discount information if applicable
+		if discountAmount.GreaterThan(decimal.Zero) || promotionCodeID != "" {
+			h.logger.Infow("updating payment with discount information",
+				"payment_id", payment.ID,
+				"session_id", session.ID,
+				"discount_amount", discountAmount.String(),
+				"promotion_code_id", promotionCodeID,
+			)
+
+			// Prepare gateway metadata with discount information
+			gatewayMetadata := types.Metadata{}
+			if payment.GatewayMetadata != nil {
+				// Copy existing gateway metadata
+				for k, v := range payment.GatewayMetadata {
+					gatewayMetadata[k] = v
+				}
+			}
+
+			// Add discount information
+			gatewayMetadata["stripe_discount_amount"] = discountAmount.String()
+			if promotionCodeID != "" {
+				gatewayMetadata["stripe_promotion_code_id"] = promotionCodeID
+				gatewayMetadata["promotion_code"] = promotionCodeID
+			}
+			gatewayMetadata["stripe_amount_subtotal"] = actualAmount.String()
+			gatewayMetadata["stripe_amount_total"] = discountAmount.Add(actualAmount).String()
+
+			// Update payment with discount metadata
+			updateReq := dto.UpdatePaymentRequest{
+				GatewayMetadata: &gatewayMetadata,
+			}
+
+			paymentService := service.NewPaymentService(h.stripeService.ServiceParams)
+			if _, updateErr := paymentService.UpdatePayment(c.Request.Context(), payment.ID, updateReq); updateErr != nil {
+				h.logger.Errorw("failed to update payment with discount metadata",
+					"error", updateErr,
+					"payment_id", payment.ID,
+					"discount_amount", discountAmount.String(),
+					"promotion_code_id", promotionCodeID,
+				)
+				// Don't fail the webhook if metadata update fails, but log the error
+			}
+		}
+
+		if err := h.stripeService.ReconcilePaymentWithInvoice(c.Request.Context(), payment.ID, actualAmount); err != nil {
 			h.logger.Errorw("failed to reconcile payment with invoice",
 				"error", err,
 				"payment_id", payment.ID,
@@ -1094,4 +1153,99 @@ func (h *WebhookHandler) handlePaymentIntentPaymentFailed(c *gin.Context, event 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Payment intent payment failed webhook processed successfully",
 	})
+}
+
+// validatePaymentAmountWithDiscounts validates payment amounts and handles discounts from checkout session
+func (h *WebhookHandler) validatePaymentAmountWithDiscounts(session stripe.CheckoutSession, payment *dto.PaymentResponse, rawEventData []byte) (decimal.Decimal, decimal.Decimal, string, error) {
+	// Convert Stripe amounts from cents to dollars
+	amountSubtotal := decimal.NewFromInt(session.AmountSubtotal).Div(decimal.NewFromInt(100))
+	amountTotal := decimal.NewFromInt(session.AmountTotal).Div(decimal.NewFromInt(100))
+
+	var amountDiscount decimal.Decimal
+	if session.TotalDetails != nil {
+		amountDiscount = decimal.NewFromInt(session.TotalDetails.AmountDiscount).Div(decimal.NewFromInt(100))
+	}
+
+	h.logger.Infow("validating payment amounts with discounts",
+		"payment_id", payment.ID,
+		"session_id", session.ID,
+		"stripe_amount_subtotal", amountSubtotal.String(),
+		"stripe_amount_total", amountTotal.String(),
+		"stripe_amount_discount", amountDiscount.String(),
+		"stripe_currency", session.Currency,
+		"payment_amount", payment.Amount.String(),
+		"payment_currency", payment.Currency,
+	)
+
+	// Validate currency matches
+	if string(session.Currency) != payment.Currency {
+		return decimal.Zero, decimal.Zero, "", fmt.Errorf("currency mismatch: Stripe currency is %s, but payment currency is %s",
+			string(session.Currency), payment.Currency)
+	}
+
+	// Get promotion code ID if discount was applied
+	var promotionCodeID string
+	if amountDiscount.GreaterThan(decimal.Zero) {
+		// Parse the raw event data to extract promotion code information
+		var rawSessionData map[string]interface{}
+		if err := json.Unmarshal(rawEventData, &rawSessionData); err == nil {
+			if discounts, exists := rawSessionData["discounts"]; exists {
+				if discountArray, ok := discounts.([]interface{}); ok && len(discountArray) > 0 {
+					if firstDiscount, ok := discountArray[0].(map[string]interface{}); ok {
+						if promotionCode, exists := firstDiscount["promotion_code"]; exists {
+							// The promotion_code can be either a string (ID) or an object with an id field
+							if promotionCodeStr, ok := promotionCode.(string); ok {
+								// Direct string ID
+								promotionCodeID = promotionCodeStr
+							} else if promotionCodeMap, ok := promotionCode.(map[string]interface{}); ok {
+								// Object with id field
+								if id, exists := promotionCodeMap["id"]; exists {
+									if idStr, ok := id.(string); ok {
+										promotionCodeID = idStr
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		h.logger.Infow("extracted promotion code from discount",
+			"payment_id", payment.ID,
+			"session_id", session.ID,
+			"discount_amount", amountDiscount.String(),
+			"promotion_code_id", promotionCodeID,
+		)
+	}
+
+	// Validate that our payment amount matches the original amount (subtotal)
+	// This ensures the payment was created for the correct invoice amount
+	if !payment.Amount.Equal(amountSubtotal) {
+		return decimal.Zero, decimal.Zero, "", fmt.Errorf("payment amount mismatch: our payment amount is %s, but Stripe subtotal is %s (total: %s, discount: %s)",
+			payment.Amount.String(), amountSubtotal.String(), amountTotal.String(), amountDiscount.String())
+	}
+
+	// Validate that the discount math is correct: amount_total + amount_discount = amount_subtotal
+	// This ensures Stripe applied the discount correctly
+	calculatedSubtotal := amountTotal.Add(amountDiscount)
+	if !calculatedSubtotal.Equal(amountSubtotal) {
+		return decimal.Zero, decimal.Zero, "", fmt.Errorf("stripe discount calculation error: amount_total (%s) + amount_discount (%s) = %s, but amount_subtotal is %s",
+			amountTotal.String(), amountDiscount.String(), calculatedSubtotal.String(), amountSubtotal.String())
+	}
+
+	h.logger.Infow("payment amount validation successful",
+		"payment_id", payment.ID,
+		"session_id", session.ID,
+		"payment_amount", payment.Amount.String(),
+		"stripe_subtotal", amountSubtotal.String(),
+		"stripe_charged", amountTotal.String(),
+		"discount_amount", amountDiscount.String(),
+		"promotion_code_id", promotionCodeID,
+	)
+
+	// Return the original payment amount for reconciliation
+	// We reconcile with the full payment amount ($10) since that's what covers the invoice
+	// The discount ($2) is Stripe's benefit to the customer, but we still apply $10 to the invoice
+	return payment.Amount, amountDiscount, promotionCodeID, nil
 }

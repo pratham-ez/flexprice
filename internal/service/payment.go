@@ -284,6 +284,9 @@ func (s *paymentService) UpdatePayment(ctx context.Context, id string, req dto.U
 	if req.Metadata != nil {
 		p.Metadata = *req.Metadata
 	}
+	if req.GatewayMetadata != nil {
+		p.GatewayMetadata = *req.GatewayMetadata
+	}
 
 	if err := s.PaymentRepo.Update(ctx, p); err != nil {
 		return nil, err // Repository already using ierr

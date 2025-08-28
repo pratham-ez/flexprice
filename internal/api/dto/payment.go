@@ -36,6 +36,7 @@ type UpdatePaymentRequest struct {
 	GatewayPaymentID *string         `json:"gateway_payment_id,omitempty"`
 	PaymentMethodID  *string         `json:"payment_method_id,omitempty"`
 	Metadata         *types.Metadata `json:"metadata,omitempty"`
+	GatewayMetadata  *types.Metadata `json:"gateway_metadata,omitempty"`
 	SucceededAt      *time.Time      `json:"succeeded_at,omitempty"`
 	FailedAt         *time.Time      `json:"failed_at,omitempty"`
 	ErrorMessage     *string         `json:"error_message,omitempty"`

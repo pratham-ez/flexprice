@@ -1024,6 +1024,41 @@ func (s *StripeService) ChargeSavedPaymentMethod(ctx context.Context, req *dto.C
 			Mark(ierr.ErrSystem)
 	}
 
+	// Validate payment amount matches Stripe PaymentIntent amount
+	stripeAmountDecimal := decimal.NewFromInt(paymentIntent.Amount).Div(decimal.NewFromInt(100))
+	if !req.Amount.Equal(stripeAmountDecimal) {
+		s.Logger.Errorw("payment amount mismatch with Stripe PaymentIntent",
+			"payment_intent_id", paymentIntent.ID,
+			"requested_amount", req.Amount.String(),
+			"stripe_amount", stripeAmountDecimal.String(),
+		)
+		return nil, ierr.NewError("payment amount mismatch").
+			WithHint("Payment amount does not match Stripe PaymentIntent amount").
+			WithReportableDetails(map[string]interface{}{
+				"requested_amount":  req.Amount.String(),
+				"stripe_amount":     stripeAmountDecimal.String(),
+				"payment_intent_id": paymentIntent.ID,
+			}).
+			Mark(ierr.ErrValidation)
+	}
+
+	// Validate currency matches Stripe PaymentIntent currency
+	if req.Currency != string(paymentIntent.Currency) {
+		s.Logger.Errorw("currency mismatch with Stripe PaymentIntent",
+			"payment_intent_id", paymentIntent.ID,
+			"requested_currency", req.Currency,
+			"stripe_currency", string(paymentIntent.Currency),
+		)
+		return nil, ierr.NewError("currency mismatch").
+			WithHint("Payment currency does not match Stripe PaymentIntent currency").
+			WithReportableDetails(map[string]interface{}{
+				"requested_currency": req.Currency,
+				"stripe_currency":    string(paymentIntent.Currency),
+				"payment_intent_id":  paymentIntent.ID,
+			}).
+			Mark(ierr.ErrValidation)
+	}
+
 	response := &dto.PaymentIntentResponse{
 		ID:            paymentIntent.ID,
 		Status:        string(paymentIntent.Status),
@@ -1039,6 +1074,7 @@ func (s *StripeService) ChargeSavedPaymentMethod(ctx context.Context, req *dto.C
 		"customer_id", req.CustomerID,
 		"payment_method_id", req.PaymentMethodID,
 		"amount", req.Amount.String(),
+		"stripe_amount", stripeAmountDecimal.String(),
 		"status", paymentIntent.Status,
 	)
 
