@@ -255,6 +255,7 @@ func (p *paymentProcessor) handlePaymentLinkCreation(ctx context.Context, paymen
 		Currency:   paymentObj.Currency,
 		SuccessURL: successURL,
 		CancelURL:  cancelURL,
+		PaymentID:  paymentObj.ID,
 		Gateway: func() *types.PaymentGatewayType {
 			if paymentObj.PaymentGateway != nil {
 				gatewayType := types.PaymentGatewayType(*paymentObj.PaymentGateway)

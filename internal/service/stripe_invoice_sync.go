@@ -555,48 +555,26 @@ func (s *StripeInvoiceSyncService) updateFlexPriceInvoiceFromStripe(ctx context.
 
 // updateStripeInvoiceMetadata updates the Stripe invoice metadata to track FlexPrice credit payments
 func (s *StripeInvoiceSyncService) updateStripeInvoiceMetadata(ctx context.Context, stripeClient *stripe.Client, stripeInvoiceID string, paymentAmount decimal.Decimal, paymentSource string, paymentMetadata map[string]string) error {
-	// Get current invoice to read existing metadata
-	currentInvoice, err := stripeClient.V1Invoices.Retrieve(ctx, stripeInvoiceID, nil)
-	if err != nil {
-		return err
-	}
-
-	// Track total FlexPrice credit amount paid (only this field needed)
-	totalCreditsKey := "flexprice_credits_paid_cents"
-	currentCreditsStr := ""
-	if currentInvoice.Metadata != nil {
-		currentCreditsStr = currentInvoice.Metadata[totalCreditsKey]
-	}
-
-	// Parse existing credits amount (keep everything in decimal for accuracy)
-	var currentCredits decimal.Decimal
-	if currentCreditsStr != "" {
-		if parsed, err := decimal.NewFromString(currentCreditsStr); err == nil {
-			currentCredits = parsed
-		}
-	}
-
-	// Add new payment amount (convert to cents as decimal for precision)
+	// Convert payment amount to cents for metadata
 	paymentAmountCents := paymentAmount.Mul(decimal.NewFromInt(100))
-	newTotalCredits := currentCredits.Add(paymentAmountCents)
 
-	// Update the invoice metadata with only the credits total
+	// Update the invoice metadata with just the current payment amount
 	updateParams := &stripe.InvoiceUpdateParams{}
-	updateParams.AddMetadata(totalCreditsKey, newTotalCredits.String())
+	updateParams.AddMetadata("flexprice_credits_paid_cents", paymentAmountCents.String())
 
-	s.Logger.Infow("updating Stripe invoice metadata with total credit amount",
+	s.Logger.Infow("updating Stripe invoice metadata with credit payment amount",
 		"stripe_invoice_id", stripeInvoiceID,
 		"payment_amount_cents", paymentAmountCents.String(),
-		"new_total_credits_cents", newTotalCredits.String())
+		"payment_source", paymentSource)
 
-	_, err = stripeClient.V1Invoices.Update(ctx, stripeInvoiceID, updateParams)
+	_, err := stripeClient.V1Invoices.Update(ctx, stripeInvoiceID, updateParams)
 	if err != nil {
 		return err
 	}
 
 	s.Logger.Infow("successfully updated Stripe invoice metadata",
 		"stripe_invoice_id", stripeInvoiceID,
-		"total_credits_paid_cents", newTotalCredits.String())
+		"payment_amount_cents", paymentAmountCents.String())
 
 	return nil
 }

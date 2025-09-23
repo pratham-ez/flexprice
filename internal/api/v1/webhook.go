@@ -19,6 +19,7 @@ import (
 	"github.com/samber/lo"
 	"github.com/shopspring/decimal"
 	"github.com/stripe/stripe-go/v82"
+	"github.com/stripe/stripe-go/v82/invoice"
 )
 
 // WebhookHandler handles webhook-related endpoints
@@ -238,6 +239,8 @@ func (h *WebhookHandler) HandleStripeWebhook(c *gin.Context) {
 		h.handleInvoicePaymentPaid(c, event, environmentID)
 	case string(types.WebhookEventTypeSetupIntentSucceeded):
 		h.handleSetupIntentSucceeded(c, event, environmentID)
+	case string(types.WebhookEventTypePaymentIntentSucceeded):
+		h.handlePaymentIntentSucceeded(c, event, environmentID)
 
 	default:
 		h.logger.Infow("unhandled Stripe webhook event type", "type", event.Type)
@@ -1263,36 +1266,33 @@ func (h *WebhookHandler) handleInvoicePaymentPaid(c *gin.Context, event *stripe.
 		return
 	}
 
-	// From the webhook payload, invoice is a string ID
-	// Parse it manually from the raw JSON since the struct might not match exactly
-	var rawData map[string]interface{}
-	if err := json.Unmarshal(event.Data.Raw, &rawData); err != nil {
-		h.logger.Errorw("failed to parse raw webhook data",
+	// Extract Stripe invoice ID from webhook data
+	stripeInvoiceID, err := h.extractStripeInvoiceID(event.Data.Raw)
+	if err != nil {
+		h.logger.Errorw("failed to extract stripe invoice ID",
 			"error", err,
 			"event_id", event.ID)
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Failed to parse webhook data",
+			"error": "Failed to extract invoice ID",
 		})
 		return
 	}
 
-	stripeInvoiceID := ""
-	if invoiceID, exists := rawData["invoice"]; exists {
-		if invoiceStr, ok := invoiceID.(string); ok {
-			stripeInvoiceID = invoiceStr
-		}
-	}
-	if stripeInvoiceID == "" {
-		h.logger.Errorw("no invoice ID in invoice payment webhook",
+	// Extract payment intent ID from webhook data
+	paymentIntentID, err := h.extractPaymentIntentID(&invoicePayment)
+	if err != nil {
+		h.logger.Errorw("failed to extract payment intent ID",
+			"error", err,
 			"event_id", event.ID)
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "No invoice ID in webhook data",
+			"error": "Failed to extract payment intent ID",
 		})
 		return
 	}
 
 	h.logger.Infow("processing invoice payment webhook",
 		"stripe_invoice_id", stripeInvoiceID,
+		"payment_intent_id", paymentIntentID,
 		"amount_paid", invoicePayment.AmountPaid,
 		"currency", invoicePayment.Currency,
 		"event_id", event.ID)
@@ -1300,87 +1300,197 @@ func (h *WebhookHandler) handleInvoicePaymentPaid(c *gin.Context, event *stripe.
 	// Set context with environment ID
 	ctx := types.SetEnvironmentID(c.Request.Context(), environmentID)
 
-	// Get payment intent details to check payment source
-	paymentIntentID := ""
-	if invoicePayment.Payment != nil && invoicePayment.Payment.PaymentIntent != nil {
-		paymentIntentID = invoicePayment.Payment.PaymentIntent.ID
-	}
-
-	if paymentIntentID == "" {
-		h.logger.Warnw("no payment intent found in invoice payment",
-			"stripe_invoice_id", stripeInvoiceID,
-			"event_id", event.ID)
-		c.JSON(http.StatusOK, gin.H{
-			"message": "No payment intent found",
-		})
-		return
-	}
-
-	// Check if this payment is from a checkout session (already processed by checkout.session.completed)
-	// Skip processing to avoid double reconciliation
-	if h.isPaymentFromCheckoutSession(ctx, paymentIntentID) {
-		h.logger.Infow("payment is from checkout session, skipping invoice_payment.paid processing to avoid double reconciliation",
+	// Apply early return filters based on business logic
+	if shouldSkipProcessing, reason := h.shouldSkipInvoicePaymentProcessing(ctx, paymentIntentID, stripeInvoiceID, environmentID); shouldSkipProcessing {
+		h.logger.Infow("skipping invoice payment processing",
+			"reason", reason,
 			"payment_intent_id", paymentIntentID,
 			"stripe_invoice_id", stripeInvoiceID,
 			"event_id", event.ID)
 		c.JSON(http.StatusOK, gin.H{
-			"message": "Payment from checkout session already processed",
+			"message": reason,
 		})
 		return
 	}
 
-	// Get payment intent details from Stripe
-	paymentIntent, err := h.stripeService.GetPaymentIntent(ctx, paymentIntentID, environmentID)
-	if err != nil {
-		h.logger.Errorw("failed to get payment intent from Stripe",
+	// Process FlexPrice credit payments sync
+	if err := h.syncFlexPriceCreditPayments(ctx, stripeInvoiceID); err != nil {
+		h.logger.Errorw("failed to sync FlexPrice credit payments",
 			"error", err,
-			"payment_intent_id", paymentIntentID,
-			"stripe_invoice_id", stripeInvoiceID)
+			"stripe_invoice_id", stripeInvoiceID,
+			"event_id", event.ID)
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Failed to get payment intent details",
+			"error": "Failed to sync credit payments",
 		})
 		return
-	}
-
-	// Check payment source to determine processing approach
-	paymentSource := paymentIntent.Metadata["payment_source"]
-	if paymentSource == "flexprice" {
-		// This is a FlexPrice-initiated payment - sync credit payments
-		h.logger.Infow("processing FlexPrice-initiated payment - syncing credit payments",
-			"payment_intent_id", paymentIntentID,
-			"stripe_invoice_id", stripeInvoiceID)
-
-		if err := h.syncFlexPriceCreditPayments(ctx, stripeInvoiceID); err != nil {
-			h.logger.Errorw("failed to sync FlexPrice credit payments",
-				"error", err,
-				"stripe_invoice_id", stripeInvoiceID,
-				"event_id", event.ID)
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"error": "Failed to sync credit payments",
-			})
-			return
-		}
-	} else {
-		// This is an external Stripe payment - process reconciliation
-		h.logger.Infow("processing external Stripe payment - reconciling invoice",
-			"payment_intent_id", paymentIntentID,
-			"stripe_invoice_id", stripeInvoiceID)
-
-		if err := h.stripeService.ProcessExternalStripePayment(ctx, paymentIntent, stripeInvoiceID); err != nil {
-			h.logger.Errorw("failed to process external Stripe payment",
-				"error", err,
-				"payment_intent_id", paymentIntentID,
-				"stripe_invoice_id", stripeInvoiceID)
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"error": "Failed to process external payment",
-			})
-			return
-		}
 	}
 
 	h.logger.Infow("successfully processed invoice payment webhook",
 		"stripe_invoice_id", stripeInvoiceID,
+		"payment_intent_id", paymentIntentID,
 		"event_id", event.ID)
+}
+
+// extractStripeInvoiceID extracts the Stripe invoice ID from webhook raw data
+func (h *WebhookHandler) extractStripeInvoiceID(rawData []byte) (string, error) {
+	var data map[string]interface{}
+	if err := json.Unmarshal(rawData, &data); err != nil {
+		return "", err
+	}
+
+	if invoiceID, exists := data["invoice"]; exists {
+		if invoiceStr, ok := invoiceID.(string); ok {
+			return invoiceStr, nil
+		}
+	}
+
+	return "", fmt.Errorf("no invoice ID found in webhook data")
+}
+
+// extractPaymentIntentID extracts the payment intent ID from invoice payment object
+func (h *WebhookHandler) extractPaymentIntentID(invoicePayment *stripe.InvoicePayment) (string, error) {
+	if invoicePayment.Payment == nil {
+		return "", fmt.Errorf("no payment found in invoice payment")
+	}
+
+	if invoicePayment.Payment.PaymentIntent == nil {
+		return "", fmt.Errorf("no payment intent found in payment")
+	}
+
+	return invoicePayment.Payment.PaymentIntent.ID, nil
+}
+
+// shouldSkipInvoicePaymentProcessing applies business logic filters to determine if processing should be skipped
+func (h *WebhookHandler) shouldSkipInvoicePaymentProcessing(ctx context.Context, paymentIntentID, stripeInvoiceID, environmentID string) (bool, string) {
+	// Filter 1: Check if payment_intent_id exists in our payment table - must be TRUE
+	if !h.paymentExistsInDatabase(ctx, paymentIntentID) {
+		return true, "Payment intent does not exist in our database"
+	}
+
+	// Filter 2: Fetch payment intent from Stripe and check if source is flexprice - must be TRUE
+	if !h.isFlexPriceInitiatedPayment(ctx, paymentIntentID, environmentID) {
+		return true, "Payment is not FlexPrice-initiated"
+	}
+
+	// Filter 3: Check if stripe_invoice_id exists in our invoice mapping - must be TRUE
+	if !h.invoiceExistsInMapping(ctx, stripeInvoiceID) {
+		return true, "Stripe invoice not found in our entity mappings"
+	}
+
+	// Filter 4: Fetch stripe invoice and check if it's marked as paid out of band - must be FALSE
+	if h.isStripeInvoicePaidOutOfBand(ctx, stripeInvoiceID) {
+		return true, "Stripe invoice is already marked as paid out of band"
+	}
+
+	// All conditions met: payment exists, is FlexPrice-initiated, invoice exists in mapping, and not paid out of band
+	return false, ""
+}
+
+// paymentExistsInDatabase checks if payment_intent_id exists in our payment table
+func (h *WebhookHandler) paymentExistsInDatabase(ctx context.Context, paymentIntentID string) bool {
+	filter := &types.PaymentFilter{
+		GatewayPaymentID: &paymentIntentID,
+	}
+
+	payments, err := h.stripeService.PaymentRepo.List(ctx, filter)
+	if err != nil {
+		h.logger.Errorw("failed to check payment existence in database",
+			"error", err,
+			"payment_intent_id", paymentIntentID)
+		return false
+	}
+
+	return len(payments) > 0
+}
+
+// isFlexPriceInitiatedPayment checks if the payment intent is FlexPrice-initiated
+func (h *WebhookHandler) isFlexPriceInitiatedPayment(ctx context.Context, paymentIntentID, environmentID string) bool {
+	paymentIntent, err := h.stripeService.GetPaymentIntent(ctx, paymentIntentID, environmentID)
+	if err != nil {
+		h.logger.Errorw("failed to get payment intent from Stripe",
+			"error", err,
+			"payment_intent_id", paymentIntentID)
+		return false
+	}
+
+	paymentSource := paymentIntent.Metadata["payment_source"]
+	return paymentSource == "flexprice"
+}
+
+// invoiceExistsInMapping checks if stripe_invoice_id exists in our entity integration mapping
+func (h *WebhookHandler) invoiceExistsInMapping(ctx context.Context, stripeInvoiceID string) bool {
+	filter := &types.EntityIntegrationMappingFilter{
+		ProviderEntityIDs: []string{stripeInvoiceID},
+		EntityType:        "invoice",
+		ProviderTypes:     []string{"stripe"},
+	}
+
+	mappingService := service.NewEntityIntegrationMappingService(service.ServiceParams{
+		Logger:                       h.logger,
+		EntityIntegrationMappingRepo: h.stripeService.EntityIntegrationMappingRepo,
+	})
+
+	mappings, err := mappingService.GetEntityIntegrationMappings(ctx, filter)
+	if err != nil {
+		h.logger.Errorw("failed to check invoice mapping existence",
+			"error", err,
+			"stripe_invoice_id", stripeInvoiceID)
+		return false
+	}
+
+	return len(mappings.Items) > 0
+}
+
+// isStripeInvoicePaidOutOfBand checks if the Stripe invoice is marked as paid out of band
+func (h *WebhookHandler) isStripeInvoicePaidOutOfBand(ctx context.Context, stripeInvoiceID string) bool {
+	// Get Stripe connection
+	conn, err := h.stripeService.ConnectionRepo.GetByProvider(ctx, types.SecretProviderStripe)
+	if err != nil {
+		h.logger.Errorw("failed to get Stripe connection",
+			"error", err,
+			"stripe_invoice_id", stripeInvoiceID)
+		return false
+	}
+
+	// Get decrypted Stripe config
+	stripeConfig, err := h.stripeService.GetDecryptedStripeConfig(conn)
+	if err != nil {
+		h.logger.Errorw("failed to get Stripe configuration",
+			"error", err,
+			"stripe_invoice_id", stripeInvoiceID)
+		return false
+	}
+
+	// Set Stripe API key
+	stripe.Key = stripeConfig.SecretKey
+
+	// Retrieve the Stripe invoice using the SDK
+	params := &stripe.InvoiceParams{}
+	params.AddExpand("charge")
+
+	stripeInvoice, err := invoice.Get(stripeInvoiceID, params)
+	if err != nil {
+		h.logger.Errorw("failed to retrieve Stripe invoice",
+			"error", err,
+			"stripe_invoice_id", stripeInvoiceID)
+		return false
+	}
+
+	// Check if invoice is marked as paid out of band using LastResponse
+	// The Stripe Go SDK stores the raw response in LastResponse
+	if stripeInvoice.LastResponse != nil && stripeInvoice.LastResponse.RawJSON != nil {
+		var rawData map[string]interface{}
+		if err := json.Unmarshal(stripeInvoice.LastResponse.RawJSON, &rawData); err == nil {
+			if paidOutOfBandValue, exists := rawData["paid_out_of_band"]; exists {
+				if paidOutOfBand, ok := paidOutOfBandValue.(bool); ok {
+					return paidOutOfBand
+				}
+			}
+		}
+	}
+
+	// Fallback: check if invoice status is 'paid'
+	return stripeInvoice.Status == stripe.InvoiceStatusPaid
 }
 
 // syncFlexPriceCreditPayments finds and syncs all FlexPrice credit payments for a Stripe invoice
@@ -1622,4 +1732,16 @@ func (h *WebhookHandler) handleSetupIntentSucceeded(c *gin.Context, event *strip
 
 		"message": "Setup intent processed and payment method set as default",
 	})
+}
+
+func (h *WebhookHandler) handlePaymentIntentSucceeded(c *gin.Context, event *stripe.Event, environmentID string) {
+	var paymentIntent stripe.PaymentIntent
+	err := json.Unmarshal(event.Data.Raw, &paymentIntent)
+	if err != nil {
+		h.logger.Errorw("failed to parse payment intent from webhook", "error", err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Failed to parse payment intent data",
+		})
+		return
+	}
 }

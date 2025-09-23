@@ -50,6 +50,7 @@ const (
 	WebhookEventTypePaymentIntentPaymentFailed           WebhookEventType = "payment_intent.payment_failed"
 	WebhookEventTypeInvoicePaymentPaid                   WebhookEventType = "invoice_payment.paid"
 	WebhookEventTypeSetupIntentSucceeded                 WebhookEventType = "setup_intent.succeeded"
+	WebhookEventTypePaymentIntentSucceeded               WebhookEventType = "payment_intent.succeeded"
 )
 
 // Validate validates the webhook event type

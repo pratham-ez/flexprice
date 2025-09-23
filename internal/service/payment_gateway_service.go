@@ -88,6 +88,7 @@ func (s *paymentGatewayService) CreatePaymentLink(ctx context.Context, req *dto.
 			Currency:               req.Currency,
 			SuccessURL:             req.SuccessURL,
 			CancelURL:              req.CancelURL,
+			PaymentID:              req.PaymentID,
 			Metadata:               req.Metadata,
 			SaveCardAndMakeDefault: req.SaveCardAndMakeDefault,
 		}

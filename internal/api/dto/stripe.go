@@ -17,6 +17,7 @@ type CreateStripePaymentLinkRequest struct {
 	SuccessURL             string          `json:"success_url,omitempty"`
 	CancelURL              string          `json:"cancel_url,omitempty"`
 	EnvironmentID          string          `json:"environment_id" binding:"required"`
+	PaymentID              string          `json:"payment_id,omitempty"`
 	Metadata               types.Metadata  `json:"metadata,omitempty"`
 	SaveCardAndMakeDefault bool            `json:"save_card_and_make_default" default:"false"`
 }

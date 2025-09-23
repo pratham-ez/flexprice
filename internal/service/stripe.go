@@ -516,9 +516,12 @@ func (s *StripeService) CreatePaymentLink(ctx context.Context, req *dto.CreateSt
 
 	// Build metadata for the session
 	metadata := map[string]string{
-		"invoice_id":     req.InvoiceID,
-		"customer_id":    req.CustomerID,
-		"environment_id": req.EnvironmentID,
+		"invoice_id":           req.InvoiceID,
+		"customer_id":          req.CustomerID,
+		"environment_id":       req.EnvironmentID,
+		"payment_source":       "flexprice",
+		"payment_type":         "checkout_link",
+		"flexprice_payment_id": req.PaymentID,
 	}
 
 	// Try to get Stripe invoice ID for attachment tracking
@@ -558,12 +561,16 @@ func (s *StripeService) CreatePaymentLink(ctx context.Context, req *dto.CreateSt
 		CancelURL:           stripe.String(cancelURL),
 		Metadata:            metadata,
 		Customer:            stripe.String(stripeCustomerID),
+		PaymentIntentData: &stripe.CheckoutSessionCreatePaymentIntentDataParams{
+			Metadata: metadata,
+		},
 	}
 
 	// Only save payment method for future use if SaveCardAndMakeDefault is true
 	if req.SaveCardAndMakeDefault {
 		params.PaymentIntentData = &stripe.CheckoutSessionCreatePaymentIntentDataParams{
 			SetupFutureUsage: stripe.String("off_session"),
+			Metadata:         metadata,
 		}
 		s.Logger.Infow("payment link configured to save card and make default",
 			"invoice_id", req.InvoiceID,

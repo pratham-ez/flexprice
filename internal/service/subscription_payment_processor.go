@@ -587,7 +587,49 @@ func (s *subscriptionPaymentProcessor) processCreditsPayment(
 		"amount_paid", amountPaid,
 	)
 
+	// Sync credits payment to Stripe if invoice is synced and payment was successful
+	if amountPaid.GreaterThan(decimal.Zero) {
+		s.syncCreditsToStripeIfNeeded(ctx, inv.ID, amountPaid)
+	}
+
 	return amountPaid
+}
+
+// syncCreditsToStripeIfNeeded syncs credit payment to Stripe using existing infrastructure
+func (s *subscriptionPaymentProcessor) syncCreditsToStripeIfNeeded(ctx context.Context, invoiceID string, amountPaid decimal.Decimal) {
+	s.Logger.Infow("attempting to sync credits payment to Stripe",
+		"invoice_id", invoiceID,
+		"amount_paid", amountPaid,
+	)
+
+	// Check if invoice is synced to Stripe
+	if !s.isInvoiceSyncedToStripe(ctx, invoiceID) {
+		s.Logger.Debugw("invoice not synced to Stripe, skipping credit sync",
+			"invoice_id", invoiceID,
+		)
+		return
+	}
+
+	// Use existing StripeInvoiceSyncService to sync the credit payment
+	stripeInvoiceSyncService := NewStripeInvoiceSyncService(*s.ServiceParams)
+
+	// Use the existing SyncPaymentToStripe function
+	err := stripeInvoiceSyncService.SyncPaymentToStripe(ctx, invoiceID, amountPaid, "flexprice_credits", nil)
+	if err != nil {
+		s.Logger.Errorw("failed to sync credit payment to Stripe using existing service",
+			"error", err,
+			"invoice_id", invoiceID,
+			"amount_paid", amountPaid,
+		)
+		// Don't return error here - the payment was successful locally,
+		// Stripe sync failure shouldn't affect the payment result
+		return
+	}
+
+	s.Logger.Infow("successfully synced credit payment to Stripe using existing infrastructure",
+		"invoice_id", invoiceID,
+		"amount_paid", amountPaid,
+	)
 }
 
 // ProcessCreditsPaymentForInvoice is a public wrapper for processCreditsPayment to be used by other services

@@ -14,6 +14,7 @@ type CreatePaymentLinkRequest struct {
 	Gateway                *types.PaymentGatewayType `json:"gateway,omitempty"` // Optional, will use preferred if not specified
 	SuccessURL             string                    `json:"success_url,omitempty"`
 	CancelURL              string                    `json:"cancel_url,omitempty"`
+	PaymentID              string                    `json:"payment_id,omitempty"`
 	Metadata               types.Metadata            `json:"metadata,omitempty"`
 	Description            string                    `json:"description,omitempty"`
 	SaveCardAndMakeDefault bool                      `json:"save_card_and_make_default" default:"false"`
