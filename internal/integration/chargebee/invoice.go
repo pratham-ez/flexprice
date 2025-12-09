@@ -2,6 +2,7 @@ package chargebee
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/chargebee/chargebee-go/v3/enum"
@@ -10,6 +11,7 @@ import (
 	"github.com/flexprice/flexprice/internal/domain/entityintegrationmapping"
 	"github.com/flexprice/flexprice/internal/domain/invoice"
 	"github.com/flexprice/flexprice/internal/domain/payment"
+	"github.com/flexprice/flexprice/internal/domain/price"
 	ierr "github.com/flexprice/flexprice/internal/errors"
 	"github.com/flexprice/flexprice/internal/logger"
 	"github.com/flexprice/flexprice/internal/types"
@@ -31,18 +33,39 @@ type InvoiceServiceParams struct {
 	InvoiceRepo                  invoice.Repository
 	PaymentRepo                  payment.Repository
 	EntityIntegrationMappingRepo entityintegrationmapping.Repository
+	PriceRepo                    price.Repository
 	Logger                       *logger.Logger
 }
 
 // InvoiceService handles Chargebee invoice operations
 type InvoiceService struct {
 	InvoiceServiceParams
+	itemFamilyService ChargebeeItemFamilyService
+	itemService       ChargebeeItemService
+	itemPriceService  ChargebeeItemPriceService
 }
 
 // NewInvoiceService creates a new Chargebee invoice service
 func NewInvoiceService(params InvoiceServiceParams) ChargebeeInvoiceService {
+	// Initialize dependent services for item and item price creation
+	itemFamilyService := NewItemFamilyService(ItemFamilyServiceParams{
+		Client: params.Client,
+		Logger: params.Logger,
+	})
+	itemService := NewItemService(ItemServiceParams{
+		Client: params.Client,
+		Logger: params.Logger,
+	})
+	itemPriceService := NewItemPriceService(ItemPriceServiceParams{
+		Client: params.Client,
+		Logger: params.Logger,
+	})
+
 	return &InvoiceService{
 		InvoiceServiceParams: params,
+		itemFamilyService:    itemFamilyService,
+		itemService:          itemService,
+		itemPriceService:     itemPriceService,
 	}
 }
 
@@ -402,7 +425,8 @@ func (s *InvoiceService) buildLineItems(ctx context.Context, flexInvoice *invoic
 	return lineItems, nil
 }
 
-// getChargebeeItemPriceIDAndCheckTiered retrieves the Chargebee item price ID and checks if it uses tiered pricing
+// getChargebeeItemPriceIDAndCheckTiered retrieves or creates the Chargebee item price ID and checks if it uses tiered pricing
+// If the price is not found in Chargebee but exists in FlexPrice, it creates the item and item price in Chargebee
 func (s *InvoiceService) getChargebeeItemPriceIDAndCheckTiered(ctx context.Context, flexPriceID string) (string, bool, error) {
 	if flexPriceID == "" {
 		return "", false, ierr.NewError("price ID is required").
@@ -423,28 +447,57 @@ func (s *InvoiceService) getChargebeeItemPriceIDAndCheckTiered(ctx context.Conte
 			Mark(ierr.ErrDatabase)
 	}
 
-	if len(mappings) == 0 {
-		return "", false, ierr.NewError("Chargebee item price not found for FlexPrice price").
-			WithHint("Price must be synced to Chargebee before creating invoice").
-			WithReportableDetails(map[string]interface{}{
-				"flexprice_price_id": flexPriceID,
-			}).
-			Mark(ierr.ErrNotFound)
+	var chargebeeItemPriceID string
+	var pricingModel string
+
+	// If mapping exists, use it
+	if len(mappings) > 0 {
+		chargebeeItemPriceID = mappings[0].ProviderEntityID
+
+		// Fetch the item price from Chargebee to check its pricing model
+		result, err := s.Client.RetrieveItemPrice(ctx, chargebeeItemPriceID)
+		if err != nil {
+			s.Logger.Warnw("failed to retrieve item price from Chargebee, assuming flat_fee",
+				"item_price_id", chargebeeItemPriceID,
+				"error", err)
+			// Fallback: assume flat_fee if we can't fetch
+			return chargebeeItemPriceID, false, nil
+		}
+
+		pricingModel = string(result.ItemPrice.PricingModel)
+	} else {
+		// Mapping doesn't exist - create item and item price in Chargebee
+		s.Logger.Infow("Chargebee item price not found, creating in Chargebee",
+			"flexprice_price_id", flexPriceID)
+
+		// Get the FlexPrice price details
+		flexPrice, err := s.PriceRepo.Get(ctx, flexPriceID)
+		if err != nil {
+			return "", false, ierr.WithError(err).
+				WithHint("Failed to get FlexPrice price").
+				WithReportableDetails(map[string]interface{}{
+					"flexprice_price_id": flexPriceID,
+				}).
+				Mark(ierr.ErrDatabase)
+		}
+
+		// Create item and item price in Chargebee
+		createdItemPriceID, createdPricingModel, err := s.createItemAndItemPriceInChargebee(ctx, flexPrice)
+		if err != nil {
+			return "", false, ierr.WithError(err).
+				WithHint("Failed to create item price in Chargebee").
+				Mark(ierr.ErrInternal)
+		}
+
+		chargebeeItemPriceID = createdItemPriceID
+		pricingModel = createdPricingModel
+
+		s.Logger.Infow("successfully created item price in Chargebee",
+			"flexprice_price_id", flexPriceID,
+			"chargebee_item_price_id", chargebeeItemPriceID,
+			"pricing_model", pricingModel)
 	}
 
-	chargebeeItemPriceID := mappings[0].ProviderEntityID
-
-	// Fetch the item price from Chargebee to check its pricing model
-	result, err := s.Client.RetrieveItemPrice(ctx, chargebeeItemPriceID)
-	if err != nil {
-		s.Logger.Warnw("failed to retrieve item price from Chargebee, assuming flat_fee",
-			"item_price_id", chargebeeItemPriceID,
-			"error", err)
-		// Fallback: assume flat_fee if we can't fetch
-		return chargebeeItemPriceID, false, nil
-	}
-
-	pricingModel := string(result.ItemPrice.PricingModel)
 	isTiered := pricingModel == "tiered" || pricingModel == "volume" || pricingModel == "stairstep"
 
 	s.Logger.Debugw("retrieved pricing model for item price",
@@ -453,6 +506,170 @@ func (s *InvoiceService) getChargebeeItemPriceIDAndCheckTiered(ctx context.Conte
 		"is_tiered", isTiered)
 
 	return chargebeeItemPriceID, isTiered, nil
+}
+
+// createItemAndItemPriceInChargebee creates both an item and item price in Chargebee for a FlexPrice price
+// Returns the created item price ID and pricing model
+func (s *InvoiceService) createItemAndItemPriceInChargebee(ctx context.Context, flexPrice *price.Price) (string, string, error) {
+	// Step 1: Get or select the latest item family
+	itemFamily, err := s.itemFamilyService.GetLatestItemFamily(ctx)
+	if err != nil {
+		s.Logger.Errorw("failed to get item family from Chargebee",
+			"price_id", flexPrice.ID,
+			"error", err)
+		return "", "", ierr.WithError(err).
+			WithHint("Failed to get item family from Chargebee. Please create an item family first").
+			Mark(ierr.ErrNotFound)
+	}
+
+	s.Logger.Infow("using item family for price",
+		"price_id", flexPrice.ID,
+		"item_family_id", itemFamily.ID,
+		"item_family_name", itemFamily.Name)
+
+	// Step 2: Create unique item for this price
+	// Format: charge_{uuid}
+	uniqueUUID := types.GenerateUUID()
+	itemID := fmt.Sprintf("charge_%s", uniqueUUID)
+
+	// Use price ID as display name (or description if available)
+	displayName := flexPrice.ID
+	if flexPrice.Description != "" {
+		displayName = flexPrice.Description
+	}
+
+	// Use display name as external name for better invoice display
+	// Format: {display_name} - {currency} (e.g., "API Calls - USD" or "Pro Plan - USD")
+	externalName := fmt.Sprintf("%s - %s", displayName, flexPrice.Currency)
+
+	itemReq := &ItemCreateRequest{
+		ID:              itemID,
+		Name:            itemID,   // Name matches ID format (must be unique)
+		Type:            "charge", // Charge type for one-time/recurring charges
+		ItemFamilyID:    itemFamily.ID,
+		Description:     flexPrice.Description,
+		ExternalName:    externalName, // Customer-facing name on invoices
+		EnabledInPortal: true,
+	}
+
+	item, err := s.itemService.CreateItem(ctx, itemReq)
+	if err != nil {
+		s.Logger.Errorw("failed to create item in Chargebee",
+			"price_id", flexPrice.ID,
+			"item_id", itemID,
+			"error", err)
+		return "", "", ierr.WithError(err).
+			WithHint("Failed to create item in Chargebee").
+			Mark(ierr.ErrInternal)
+	}
+
+	s.Logger.Infow("successfully created item in Chargebee",
+		"price_id", flexPrice.ID,
+		"item_id", item.ID)
+
+	// Step 3: Create item price for this price
+	// Item price ID should just be the FlexPrice price ID
+	itemPriceID := flexPrice.ID
+
+	// Map FlexPrice pricing model to Chargebee pricing model
+	pricingModel := mapPricingModel(flexPrice)
+
+	// Use display name as external name for better invoice display
+	itemPriceExternalName := fmt.Sprintf("%s - %s", displayName, flexPrice.Currency)
+
+	// Build item price request
+	itemPriceReq := &ItemPriceCreateRequest{
+		ID:           itemPriceID,
+		ItemID:       item.ID,
+		Name:         itemPriceID,
+		ExternalName: itemPriceExternalName, // Customer-facing name on invoices
+		PricingModel: pricingModel,
+		CurrencyCode: flexPrice.Currency,
+		Description:  flexPrice.Description,
+	}
+
+	// Set price or tiers based on billing model
+	switch flexPrice.BillingModel {
+	case types.BILLING_MODEL_TIERED:
+		// For tiered/volume pricing, send tiers array
+		// Convert domain tiers to types.PriceTier slice
+		tiers := make([]*types.PriceTier, len(flexPrice.Tiers))
+		for i := range flexPrice.Tiers {
+			tiers[i] = &types.PriceTier{
+				UpTo:       flexPrice.Tiers[i].UpTo,
+				UnitAmount: flexPrice.Tiers[i].UnitAmount,
+				FlatAmount: flexPrice.Tiers[i].FlatAmount,
+			}
+		}
+		itemPriceReq.Tiers = convertTiersForChargebee(tiers, flexPrice.Currency)
+		s.Logger.Infow("creating tiered pricing in Chargebee",
+			"price_id", flexPrice.ID,
+			"tier_mode", flexPrice.TierMode,
+			"tier_count", len(flexPrice.Tiers))
+
+	case types.BILLING_MODEL_PACKAGE:
+		// For package pricing, set price and optionally period
+		itemPriceReq.Price = convertAmountToSmallestUnit(flexPrice.Amount.InexactFloat64(), flexPrice.Currency)
+		if flexPrice.TransformQuantity.DivideBy > 0 {
+			divideBy := flexPrice.TransformQuantity.DivideBy
+			itemPriceReq.Period = &divideBy
+		}
+
+	case types.BILLING_MODEL_FLAT_FEE:
+		// For flat fee, just set the price
+		itemPriceReq.Price = convertAmountToSmallestUnit(flexPrice.Amount.InexactFloat64(), flexPrice.Currency)
+
+	default:
+		// Default to flat fee
+		itemPriceReq.Price = convertAmountToSmallestUnit(flexPrice.Amount.InexactFloat64(), flexPrice.Currency)
+	}
+
+	itemPrice, err := s.itemPriceService.CreateItemPrice(ctx, itemPriceReq)
+	if err != nil {
+		s.Logger.Errorw("failed to create item price in Chargebee",
+			"price_id", flexPrice.ID,
+			"item_price_id", itemPriceID,
+			"item_id", item.ID,
+			"error", err)
+		return "", "", ierr.WithError(err).
+			WithHint("Failed to create item price in Chargebee").
+			Mark(ierr.ErrInternal)
+	}
+
+	s.Logger.Infow("successfully created item price in Chargebee",
+		"price_id", flexPrice.ID,
+		"item_price_id", itemPrice.ID,
+		"item_id", item.ID,
+		"amount", itemPrice.Price,
+		"currency", itemPrice.CurrencyCode)
+
+	// Step 4: Save entity mapping for price -> item_price
+	mapping := &entityintegrationmapping.EntityIntegrationMapping{
+		ID:               types.GenerateUUIDWithPrefix(types.UUID_PREFIX_ENTITY_INTEGRATION_MAPPING),
+		EntityType:       types.IntegrationEntityTypeItemPrice,
+		EntityID:         flexPrice.ID,
+		ProviderType:     string(types.SecretProviderChargebee),
+		ProviderEntityID: itemPrice.ID,
+		EnvironmentID:    flexPrice.EnvironmentID,
+		BaseModel:        types.GetDefaultBaseModel(ctx),
+		Metadata: map[string]interface{}{
+			"chargebee_charge_item_id": item.ID,
+		},
+	}
+	// Override tenant_id from price
+	mapping.TenantID = flexPrice.TenantID
+
+	err = s.EntityIntegrationMappingRepo.Create(ctx, mapping)
+	if err != nil {
+		s.Logger.Errorw("failed to save price entity mapping",
+			"price_id", flexPrice.ID,
+			"chargebee_item_price_id", itemPrice.ID,
+			"chargebee_item_id", item.ID,
+			"error", err)
+		// Don't fail the entire operation, just log the error
+	}
+
+	return itemPrice.ID, itemPrice.PricingModel, nil
 }
 
 // getChargebeeItemPriceIDSimple retrieves the Chargebee item price ID from entity mapping
