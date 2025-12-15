@@ -1,0 +1,9 @@
+# PostCostsResponse
+
+
+## Fields
+
+| Field                                                                                           | Type                                                                                            | Required                                                                                        | Description                                                                                     |
+| ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `HTTPMeta`                                                                                      | [components.HTTPMetadata](../../models/components/httpmetadata.md)                              | :heavy_check_mark:                                                                              | N/A                                                                                             |
+| `DtoCreateCostsheetResponse`                                                                    | [*components.DtoCreateCostsheetResponse](../../models/components/dtocreatecostsheetresponse.md) | :heavy_minus_sign:                                                                              | Created                                                                                         |

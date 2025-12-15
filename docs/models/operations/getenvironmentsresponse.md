@@ -1,0 +1,9 @@
+# GetEnvironmentsResponse
+
+
+## Fields
+
+| Field                                                                                             | Type                                                                                              | Required                                                                                          | Description                                                                                       |
+| ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `HTTPMeta`                                                                                        | [components.HTTPMetadata](../../models/components/httpmetadata.md)                                | :heavy_check_mark:                                                                                | N/A                                                                                               |
+| `DtoListEnvironmentsResponse`                                                                     | [*components.DtoListEnvironmentsResponse](../../models/components/dtolistenvironmentsresponse.md) | :heavy_minus_sign:                                                                                | OK                                                                                                |

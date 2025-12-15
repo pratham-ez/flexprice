@@ -1,0 +1,9 @@
+# GetSecretsIntegrationsLinkedResponse
+
+
+## Fields
+
+| Field                                                                                                 | Type                                                                                                  | Required                                                                                              | Description                                                                                           |
+| ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `HTTPMeta`                                                                                            | [components.HTTPMetadata](../../models/components/httpmetadata.md)                                    | :heavy_check_mark:                                                                                    | N/A                                                                                                   |
+| `DtoLinkedIntegrationsResponse`                                                                       | [*components.DtoLinkedIntegrationsResponse](../../models/components/dtolinkedintegrationsresponse.md) | :heavy_minus_sign:                                                                                    | OK                                                                                                    |
