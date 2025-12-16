@@ -1,0 +1,9 @@
+# PutEnvironmentsIDRequest
+
+
+## Fields
+
+| Field                                                                                            | Type                                                                                             | Required                                                                                         | Description                                                                                      |
+| ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| `ID`                                                                                             | *string*                                                                                         | :heavy_check_mark:                                                                               | Environment ID                                                                                   |
+| `Body`                                                                                           | [components.DtoUpdateEnvironmentRequest](../../models/components/dtoupdateenvironmentrequest.md) | :heavy_check_mark:                                                                               | Environment                                                                                      |
