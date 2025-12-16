@@ -1,0 +1,29 @@
+# TypesEntitlementFilter
+
+## Example Usage
+
+```typescript
+import { TypesEntitlementFilter } from "@flexprice/sdk/models";
+
+let value: TypesEntitlementFilter = {};
+```
+
+## Fields
+
+| Field                                                                          | Type                                                                           | Required                                                                       | Description                                                                    |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
+| `endTime`                                                                      | *string*                                                                       | :heavy_minus_sign:                                                             | N/A                                                                            |
+| `entityIds`                                                                    | *string*[]                                                                     | :heavy_minus_sign:                                                             | N/A                                                                            |
+| `entityType`                                                                   | [models.TypesEntitlementEntityType](../models/typesentitlemententitytype.md)   | :heavy_minus_sign:                                                             | N/A                                                                            |
+| `expand`                                                                       | *string*                                                                       | :heavy_minus_sign:                                                             | N/A                                                                            |
+| `featureIds`                                                                   | *string*[]                                                                     | :heavy_minus_sign:                                                             | N/A                                                                            |
+| `featureType`                                                                  | [models.TypesFeatureType](../models/typesfeaturetype.md)                       | :heavy_minus_sign:                                                             | N/A                                                                            |
+| `filters`                                                                      | [models.TypesFilterCondition](../models/typesfiltercondition.md)[]             | :heavy_minus_sign:                                                             | Specific filters for entitlements                                              |
+| `isEnabled`                                                                    | *boolean*                                                                      | :heavy_minus_sign:                                                             | N/A                                                                            |
+| `limit`                                                                        | *number*                                                                       | :heavy_minus_sign:                                                             | N/A                                                                            |
+| `offset`                                                                       | *number*                                                                       | :heavy_minus_sign:                                                             | N/A                                                                            |
+| `order`                                                                        | [models.TypesEntitlementFilterOrder](../models/typesentitlementfilterorder.md) | :heavy_minus_sign:                                                             | N/A                                                                            |
+| `planIds`                                                                      | *string*[]                                                                     | :heavy_minus_sign:                                                             | N/A                                                                            |
+| `sort`                                                                         | [models.TypesSortCondition](../models/typessortcondition.md)[]                 | :heavy_minus_sign:                                                             | N/A                                                                            |
+| `startTime`                                                                    | *string*                                                                       | :heavy_minus_sign:                                                             | N/A                                                                            |
+| `status`                                                                       | [models.TypesStatus](../models/typesstatus.md)                                 | :heavy_minus_sign:                                                             | N/A                                                                            |
