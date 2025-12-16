@@ -1,0 +1,12 @@
+# DtoManualBalanceDebitRequest
+
+
+## Fields
+
+| Field                                                                                  | Type                                                                                   | Required                                                                               | Description                                                                            |
+| -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `Credits`                                                                              | **string*                                                                              | :heavy_minus_sign:                                                                     | credits is the number of credits to debit from the wallet                              |
+| `Description`                                                                          | **string*                                                                              | :heavy_minus_sign:                                                                     | description to add any specific details about the transaction                          |
+| `IdempotencyKey`                                                                       | *string*                                                                               | :heavy_check_mark:                                                                     | idempotency_key is a unique key for the transaction                                    |
+| `Metadata`                                                                             | map[string]*string*                                                                    | :heavy_minus_sign:                                                                     | N/A                                                                                    |
+| `TransactionReason`                                                                    | [components.TypesTransactionReason](../../models/components/typestransactionreason.md) | :heavy_check_mark:                                                                     | N/A                                                                                    |
