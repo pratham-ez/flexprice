@@ -1,0 +1,9 @@
+# PostPricesBulkResponse
+
+
+## Fields
+
+| Field                                                                                           | Type                                                                                            | Required                                                                                        | Description                                                                                     |
+| ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `HTTPMeta`                                                                                      | [components.HTTPMetadata](../../models/components/httpmetadata.md)                              | :heavy_check_mark:                                                                              | N/A                                                                                             |
+| `DtoCreateBulkPriceResponse`                                                                    | [*components.DtoCreateBulkPriceResponse](../../models/components/dtocreatebulkpriceresponse.md) | :heavy_minus_sign:                                                                              | Created                                                                                         |
