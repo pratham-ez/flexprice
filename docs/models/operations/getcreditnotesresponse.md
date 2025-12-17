@@ -1,0 +1,9 @@
+# GetCreditnotesResponse
+
+
+## Fields
+
+| Field                                                                                           | Type                                                                                            | Required                                                                                        | Description                                                                                     |
+| ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `HTTPMeta`                                                                                      | [components.HTTPMetadata](../../models/components/httpmetadata.md)                              | :heavy_check_mark:                                                                              | N/A                                                                                             |
+| `DtoListCreditNotesResponse`                                                                    | [*components.DtoListCreditNotesResponse](../../models/components/dtolistcreditnotesresponse.md) | :heavy_minus_sign:                                                                              | OK                                                                                              |

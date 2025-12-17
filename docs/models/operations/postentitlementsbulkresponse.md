@@ -1,0 +1,9 @@
+# PostEntitlementsBulkResponse
+
+
+## Fields
+
+| Field                                                                                                       | Type                                                                                                        | Required                                                                                                    | Description                                                                                                 |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `HTTPMeta`                                                                                                  | [components.HTTPMetadata](../../models/components/httpmetadata.md)                                          | :heavy_check_mark:                                                                                          | N/A                                                                                                         |
+| `DtoCreateBulkEntitlementResponse`                                                                          | [*components.DtoCreateBulkEntitlementResponse](../../models/components/dtocreatebulkentitlementresponse.md) | :heavy_minus_sign:                                                                                          | Created                                                                                                     |
