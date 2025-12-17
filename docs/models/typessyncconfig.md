@@ -1,0 +1,13 @@
+# TypesSyncConfig
+
+
+## Fields
+
+| Field                                                                        | Type                                                                         | Required                                                                     | Description                                                                  |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `deal`                                                                       | [Optional[models.TypesEntitySyncConfig]](../models/typesentitysyncconfig.md) | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `invoice`                                                                    | [Optional[models.TypesEntitySyncConfig]](../models/typesentitysyncconfig.md) | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `payment`                                                                    | [Optional[models.TypesEntitySyncConfig]](../models/typesentitysyncconfig.md) | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `plan`                                                                       | [Optional[models.TypesEntitySyncConfig]](../models/typesentitysyncconfig.md) | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `quote`                                                                      | [Optional[models.TypesEntitySyncConfig]](../models/typesentitysyncconfig.md) | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `subscription`                                                               | [Optional[models.TypesEntitySyncConfig]](../models/typesentitysyncconfig.md) | :heavy_minus_sign:                                                           | N/A                                                                          |

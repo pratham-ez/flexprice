@@ -1,0 +1,11 @@
+# DtoUpdateConnectionRequest
+
+
+## Fields
+
+| Field                                                                            | Type                                                                             | Required                                                                         | Description                                                                      |
+| -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `encrypted_secret_data`                                                          | [Optional[models.TypesConnectionMetadata]](../models/typesconnectionmetadata.md) | :heavy_minus_sign:                                                               | N/A                                                                              |
+| `metadata`                                                                       | Dict[str, *Any*]                                                                 | :heavy_minus_sign:                                                               | N/A                                                                              |
+| `name`                                                                           | *Optional[str]*                                                                  | :heavy_minus_sign:                                                               | N/A                                                                              |
+| `sync_config`                                                                    | [Optional[models.TypesSyncConfig]](../models/typessyncconfig.md)                 | :heavy_minus_sign:                                                               | N/A                                                                              |
