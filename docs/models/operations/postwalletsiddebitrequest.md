@@ -1,0 +1,9 @@
+# PostWalletsIDDebitRequest
+
+
+## Fields
+
+| Field                                                                                              | Type                                                                                               | Required                                                                                           | Description                                                                                        |
+| -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `ID`                                                                                               | *string*                                                                                           | :heavy_check_mark:                                                                                 | Wallet ID                                                                                          |
+| `Body`                                                                                             | [components.DtoManualBalanceDebitRequest](../../models/components/dtomanualbalancedebitrequest.md) | :heavy_check_mark:                                                                                 | Debit wallet request                                                                               |

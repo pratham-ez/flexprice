@@ -1,0 +1,11 @@
+# DtoUpdateConnectionRequest
+
+
+## Fields
+
+| Field                                                                                     | Type                                                                                      | Required                                                                                  | Description                                                                               |
+| ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `EncryptedSecretData`                                                                     | [*components.TypesConnectionMetadata](../../models/components/typesconnectionmetadata.md) | :heavy_minus_sign:                                                                        | N/A                                                                                       |
+| `Metadata`                                                                                | map[string]*any*                                                                          | :heavy_minus_sign:                                                                        | N/A                                                                                       |
+| `Name`                                                                                    | **string*                                                                                 | :heavy_minus_sign:                                                                        | N/A                                                                                       |
+| `SyncConfig`                                                                              | [*components.TypesSyncConfig](../../models/components/typessyncconfig.md)                 | :heavy_minus_sign:                                                                        | N/A                                                                                       |
