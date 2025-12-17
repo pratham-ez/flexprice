@@ -1,0 +1,14 @@
+# PriceunitPriceUnitFilter
+
+
+## Fields
+
+| Field                                                                      | Type                                                                       | Required                                                                   | Description                                                                |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `environment_id`                                                           | *Optional[str]*                                                            | :heavy_minus_sign:                                                         | EnvironmentID filters by specific environment ID                           |
+| `filters`                                                                  | List[[models.TypesFilterCondition](../models/typesfiltercondition.md)]     | :heavy_minus_sign:                                                         | Filters allows complex filtering based on multiple fields                  |
+| `query_filter`                                                             | [Optional[models.TypesQueryFilter]](../models/typesqueryfilter.md)         | :heavy_minus_sign:                                                         | N/A                                                                        |
+| `sort`                                                                     | List[[models.TypesSortCondition](../models/typessortcondition.md)]         | :heavy_minus_sign:                                                         | Sort allows sorting by multiple fields                                     |
+| `status`                                                                   | [Optional[models.TypesStatus]](../models/typesstatus.md)                   | :heavy_minus_sign:                                                         | N/A                                                                        |
+| `tenant_id`                                                                | *Optional[str]*                                                            | :heavy_minus_sign:                                                         | TenantID filters by specific tenant ID                                     |
+| `time_range_filter`                                                        | [Optional[models.TypesTimeRangeFilter]](../models/typestimerangefilter.md) | :heavy_minus_sign:                                                         | N/A                                                                        |
