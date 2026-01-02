@@ -2,7 +2,7 @@
 
 package gosdk
 
-// Generated from OpenAPI doc version 1.0 and generator version 2.787.2
+// Generated from OpenAPI doc version 1.0 and generator version 2.788.15
 
 import (
 	"context"
@@ -123,9 +123,9 @@ func WithTimeout(timeout time.Duration) SDKOption {
 // New creates a new instance of the SDK with the provided serverURL and options
 func New(serverURL string, opts ...SDKOption) *FlexPrice {
 	sdk := &FlexPrice{
-		SDKVersion: "1.0.1",
+		SDKVersion: "1.0.2",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent: "speakeasy-sdk/go 1.0.1 2.787.2 1.0 github.com/flexprice/go-sdk",
+			UserAgent: "speakeasy-sdk/go 1.0.2 2.788.15 1.0 github.com/flexprice/go-sdk",
 		},
 		hooks: hooks.New(),
 	}
