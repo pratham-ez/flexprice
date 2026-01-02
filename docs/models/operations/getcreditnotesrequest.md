@@ -1,0 +1,26 @@
+# GetCreditnotesRequest
+
+## Example Usage
+
+```typescript
+import { GetCreditnotesRequest } from "@flexprice/sdk/models/operations";
+
+let value: GetCreditnotesRequest = {};
+```
+
+## Fields
+
+| Field                                                                              | Type                                                                               | Required                                                                           | Description                                                                        |
+| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `creditNoteIds`                                                                    | *string*[]                                                                         | :heavy_minus_sign:                                                                 | N/A                                                                                |
+| `creditNoteStatus`                                                                 | [operations.CreditNoteStatus](../../models/operations/creditnotestatus.md)[]       | :heavy_minus_sign:                                                                 | N/A                                                                                |
+| `creditNoteType`                                                                   | [operations.CreditNoteType](../../models/operations/creditnotetype.md)             | :heavy_minus_sign:                                                                 | N/A                                                                                |
+| `endTime`                                                                          | *string*                                                                           | :heavy_minus_sign:                                                                 | N/A                                                                                |
+| `expand`                                                                           | *string*                                                                           | :heavy_minus_sign:                                                                 | N/A                                                                                |
+| `invoiceId`                                                                        | *string*                                                                           | :heavy_minus_sign:                                                                 | N/A                                                                                |
+| `limit`                                                                            | *number*                                                                           | :heavy_minus_sign:                                                                 | N/A                                                                                |
+| `offset`                                                                           | *number*                                                                           | :heavy_minus_sign:                                                                 | N/A                                                                                |
+| `order`                                                                            | [operations.GetCreditnotesOrder](../../models/operations/getcreditnotesorder.md)   | :heavy_minus_sign:                                                                 | N/A                                                                                |
+| `sort`                                                                             | *string*                                                                           | :heavy_minus_sign:                                                                 | N/A                                                                                |
+| `startTime`                                                                        | *string*                                                                           | :heavy_minus_sign:                                                                 | N/A                                                                                |
+| `status`                                                                           | [operations.GetCreditnotesStatus](../../models/operations/getcreditnotesstatus.md) | :heavy_minus_sign:                                                                 | N/A                                                                                |

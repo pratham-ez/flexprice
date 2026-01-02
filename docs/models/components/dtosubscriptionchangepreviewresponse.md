@@ -1,0 +1,26 @@
+# DtoSubscriptionChangePreviewResponse
+
+Response showing the financial impact of a subscription plan change
+
+## Example Usage
+
+```typescript
+import { DtoSubscriptionChangePreviewResponse } from "@flexprice/sdk/models/components";
+
+let value: DtoSubscriptionChangePreviewResponse = {};
+```
+
+## Fields
+
+| Field                                                                                            | Type                                                                                             | Required                                                                                         | Description                                                                                      |
+| ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| `changeType`                                                                                     | [components.TypesSubscriptionChangeType](../../models/components/typessubscriptionchangetype.md) | :heavy_minus_sign:                                                                               | N/A                                                                                              |
+| `currentPlan`                                                                                    | [components.DtoPlanSummary](../../models/components/dtoplansummary.md)                           | :heavy_minus_sign:                                                                               | N/A                                                                                              |
+| `effectiveDate`                                                                                  | *string*                                                                                         | :heavy_minus_sign:                                                                               | effective_date is when the change would take effect                                              |
+| `metadata`                                                                                       | Record<string, *string*>                                                                         | :heavy_minus_sign:                                                                               | metadata from the request                                                                        |
+| `newBillingCycle`                                                                                | [components.DtoBillingCycleInfo](../../models/components/dtobillingcycleinfo.md)                 | :heavy_minus_sign:                                                                               | N/A                                                                                              |
+| `nextInvoicePreview`                                                                             | [components.DtoInvoicePreview](../../models/components/dtoinvoicepreview.md)                     | :heavy_minus_sign:                                                                               | N/A                                                                                              |
+| `prorationDetails`                                                                               | [components.DtoProrationDetails](../../models/components/dtoprorationdetails.md)                 | :heavy_minus_sign:                                                                               | N/A                                                                                              |
+| `subscriptionId`                                                                                 | *string*                                                                                         | :heavy_minus_sign:                                                                               | subscription_id is the ID of the subscription being changed                                      |
+| `targetPlan`                                                                                     | [components.DtoPlanSummary](../../models/components/dtoplansummary.md)                           | :heavy_minus_sign:                                                                               | N/A                                                                                              |
+| `warnings`                                                                                       | *string*[]                                                                                       | :heavy_minus_sign:                                                                               | warnings contains any warnings about the change                                                  |

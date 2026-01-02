@@ -1,0 +1,26 @@
+# TypesUserFilter
+
+## Example Usage
+
+```typescript
+import { TypesUserFilter } from "@flexprice/sdk/models/components";
+
+let value: TypesUserFilter = {};
+```
+
+## Fields
+
+| Field                                                                                | Type                                                                                 | Required                                                                             | Description                                                                          |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| `endTime`                                                                            | *string*                                                                             | :heavy_minus_sign:                                                                   | N/A                                                                                  |
+| `expand`                                                                             | *string*                                                                             | :heavy_minus_sign:                                                                   | N/A                                                                                  |
+| `filters`                                                                            | [components.TypesFilterCondition](../../models/components/typesfiltercondition.md)[] | :heavy_minus_sign:                                                                   | filters allows complex filtering based on multiple fields                            |
+| `limit`                                                                              | *number*                                                                             | :heavy_minus_sign:                                                                   | N/A                                                                                  |
+| `offset`                                                                             | *number*                                                                             | :heavy_minus_sign:                                                                   | N/A                                                                                  |
+| `order`                                                                              | [components.TypesUserFilterOrder](../../models/components/typesuserfilterorder.md)   | :heavy_minus_sign:                                                                   | N/A                                                                                  |
+| `roles`                                                                              | *string*[]                                                                           | :heavy_minus_sign:                                                                   | N/A                                                                                  |
+| `sort`                                                                               | [components.TypesSortCondition](../../models/components/typessortcondition.md)[]     | :heavy_minus_sign:                                                                   | N/A                                                                                  |
+| `startTime`                                                                          | *string*                                                                             | :heavy_minus_sign:                                                                   | N/A                                                                                  |
+| `status`                                                                             | [components.TypesStatus](../../models/components/typesstatus.md)                     | :heavy_minus_sign:                                                                   | N/A                                                                                  |
+| `type`                                                                               | [components.TypesUserType](../../models/components/typesusertype.md)                 | :heavy_minus_sign:                                                                   | N/A                                                                                  |
+| `userIds`                                                                            | *string*[]                                                                           | :heavy_minus_sign:                                                                   | Specific filters for users                                                           |

@@ -1,0 +1,26 @@
+# TypesAddonFilter
+
+## Example Usage
+
+```typescript
+import { TypesAddonFilter } from "@flexprice/sdk/models/components";
+
+let value: TypesAddonFilter = {};
+```
+
+## Fields
+
+| Field                                                                                | Type                                                                                 | Required                                                                             | Description                                                                          |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| `addonIds`                                                                           | *string*[]                                                                           | :heavy_minus_sign:                                                                   | N/A                                                                                  |
+| `addonType`                                                                          | [components.TypesAddonType](../../models/components/typesaddontype.md)               | :heavy_minus_sign:                                                                   | N/A                                                                                  |
+| `endTime`                                                                            | *string*                                                                             | :heavy_minus_sign:                                                                   | N/A                                                                                  |
+| `expand`                                                                             | *string*                                                                             | :heavy_minus_sign:                                                                   | N/A                                                                                  |
+| `filters`                                                                            | [components.TypesFilterCondition](../../models/components/typesfiltercondition.md)[] | :heavy_minus_sign:                                                                   | filters allows complex filtering based on multiple fields                            |
+| `limit`                                                                              | *number*                                                                             | :heavy_minus_sign:                                                                   | N/A                                                                                  |
+| `lookupKeys`                                                                         | *string*[]                                                                           | :heavy_minus_sign:                                                                   | N/A                                                                                  |
+| `offset`                                                                             | *number*                                                                             | :heavy_minus_sign:                                                                   | N/A                                                                                  |
+| `order`                                                                              | [components.TypesAddonFilterOrder](../../models/components/typesaddonfilterorder.md) | :heavy_minus_sign:                                                                   | N/A                                                                                  |
+| `sort`                                                                               | [components.TypesSortCondition](../../models/components/typessortcondition.md)[]     | :heavy_minus_sign:                                                                   | N/A                                                                                  |
+| `startTime`                                                                          | *string*                                                                             | :heavy_minus_sign:                                                                   | N/A                                                                                  |
+| `status`                                                                             | [components.TypesStatus](../../models/components/typesstatus.md)                     | :heavy_minus_sign:                                                                   | N/A                                                                                  |

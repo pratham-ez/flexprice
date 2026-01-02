@@ -1,0 +1,31 @@
+# GetPaymentsRequest
+
+## Example Usage
+
+```typescript
+import { GetPaymentsRequest } from "@flexprice/sdk/models/operations";
+
+let value: GetPaymentsRequest = {};
+```
+
+## Fields
+
+| Field                                                                        | Type                                                                         | Required                                                                     | Description                                                                  |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `currency`                                                                   | *string*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `destinationId`                                                              | *string*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `destinationType`                                                            | *string*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `endTime`                                                                    | *string*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `expand`                                                                     | *string*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `gatewayPaymentId`                                                           | *string*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `gatewayTrackingId`                                                          | *string*                                                                     | :heavy_minus_sign:                                                           | For filtering by gateway tracking ID                                         |
+| `limit`                                                                      | *number*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `offset`                                                                     | *number*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `order`                                                                      | [operations.GetPaymentsOrder](../../models/operations/getpaymentsorder.md)   | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `paymentGateway`                                                             | *string*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `paymentIds`                                                                 | *string*[]                                                                   | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `paymentMethodType`                                                          | *string*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `paymentStatus`                                                              | *string*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `sort`                                                                       | *string*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `startTime`                                                                  | *string*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `status`                                                                     | [operations.GetPaymentsStatus](../../models/operations/getpaymentsstatus.md) | :heavy_minus_sign:                                                           | N/A                                                                          |

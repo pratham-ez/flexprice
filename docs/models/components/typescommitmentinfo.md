@@ -1,0 +1,23 @@
+# TypesCommitmentInfo
+
+## Example Usage
+
+```typescript
+import { TypesCommitmentInfo } from "@flexprice/sdk/models/components";
+
+let value: TypesCommitmentInfo = {};
+```
+
+## Fields
+
+| Field                                                                                                | Type                                                                                                 | Required                                                                                             | Description                                                                                          |
+| ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `amount`                                                                                             | *string*                                                                                             | :heavy_minus_sign:                                                                                   | N/A                                                                                                  |
+| `computedCommitmentUtilizedAmount`                                                                   | *string*                                                                                             | :heavy_minus_sign:                                                                                   | N/A                                                                                                  |
+| `computedOverageAmount`                                                                              | *string*                                                                                             | :heavy_minus_sign:                                                                                   | N/A                                                                                                  |
+| `computedTrueUpAmount`                                                                               | *string*                                                                                             | :heavy_minus_sign:                                                                                   | total_cost = computed_commitment_utilized_amount + computed_overage_amount + computed_true_up_amount |
+| `isWindowed`                                                                                         | *boolean*                                                                                            | :heavy_minus_sign:                                                                                   | N/A                                                                                                  |
+| `overageFactor`                                                                                      | *string*                                                                                             | :heavy_minus_sign:                                                                                   | N/A                                                                                                  |
+| `quantity`                                                                                           | *string*                                                                                             | :heavy_minus_sign:                                                                                   | Only used for quantity-based commitments                                                             |
+| `trueUpEnabled`                                                                                      | *boolean*                                                                                            | :heavy_minus_sign:                                                                                   | N/A                                                                                                  |
+| `type`                                                                                               | [components.TypesCommitmentType](../../models/components/typescommitmenttype.md)                     | :heavy_minus_sign:                                                                                   | N/A                                                                                                  |
