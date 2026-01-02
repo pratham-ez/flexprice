@@ -1,0 +1,13 @@
+# GetCouponsRequest
+
+
+## Fields
+
+| Field                                                                       | Type                                                                        | Required                                                                    | Description                                                                 |
+| --------------------------------------------------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `CouponIds`                                                                 | []*string*                                                                  | :heavy_minus_sign:                                                          | N/A                                                                         |
+| `Expand`                                                                    | **string*                                                                   | :heavy_minus_sign:                                                          | N/A                                                                         |
+| `Limit`                                                                     | **int64*                                                                    | :heavy_minus_sign:                                                          | N/A                                                                         |
+| `Offset`                                                                    | **int64*                                                                    | :heavy_minus_sign:                                                          | N/A                                                                         |
+| `Order`                                                                     | [*operations.GetCouponsOrder](../../models/operations/getcouponsorder.md)   | :heavy_minus_sign:                                                          | N/A                                                                         |
+| `Status`                                                                    | [*operations.GetCouponsStatus](../../models/operations/getcouponsstatus.md) | :heavy_minus_sign:                                                          | N/A                                                                         |
