@@ -23,7 +23,6 @@ package main
 import(
 	"context"
 	gosdk "github.com/flexprice/go-sdk"
-	"github.com/flexprice/go-sdk/models/components"
 	"log"
 )
 
@@ -35,7 +34,7 @@ func main() {
         gosdk.WithSecurity("<YOUR_API_KEY_HERE>"),
     )
 
-    res, err := s.TaxAssociations.GetTaxesAssociations(ctx, components.TypesTaxAssociationFilter{})
+    res, err := s.TaxAssociations.GetTaxesAssociations(ctx, nil, nil, nil)
     if err != nil {
         log.Fatal(err)
     }
@@ -47,11 +46,13 @@ func main() {
 
 ### Parameters
 
-| Parameter                                                                                    | Type                                                                                         | Required                                                                                     | Description                                                                                  |
-| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `ctx`                                                                                        | [context.Context](https://pkg.go.dev/context#Context)                                        | :heavy_check_mark:                                                                           | The context to use for the request.                                                          |
-| `request`                                                                                    | [components.TypesTaxAssociationFilter](../../models/components/typestaxassociationfilter.md) | :heavy_check_mark:                                                                           | The request object to use for the request.                                                   |
-| `opts`                                                                                       | [][operations.Option](../../models/operations/option.md)                                     | :heavy_minus_sign:                                                                           | The options for this request.                                                                |
+| Parameter                                                | Type                                                     | Required                                                 | Description                                              |
+| -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |
+| `entityType`                                             | **string*                                                | :heavy_minus_sign:                                       | Entity Type                                              |
+| `entityID`                                               | **string*                                                | :heavy_minus_sign:                                       | Entity ID                                                |
+| `taxRateID`                                              | **string*                                                | :heavy_minus_sign:                                       | Tax Rate ID                                              |
+| `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |
 
 ### Response
 

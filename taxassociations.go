@@ -34,7 +34,13 @@ func newTaxAssociations(rootSDK *FlexPrice, sdkConfig config.SDKConfiguration, h
 
 // GetTaxesAssociations - List tax associations
 // List tax associations
-func (s *TaxAssociations) GetTaxesAssociations(ctx context.Context, request components.TypesTaxAssociationFilter, opts ...operations.Option) (*components.DtoListTaxAssociationsResponse, error) {
+func (s *TaxAssociations) GetTaxesAssociations(ctx context.Context, entityType *string, entityID *string, taxRateID *string, opts ...operations.Option) (*components.DtoListTaxAssociationsResponse, error) {
+	request := operations.GetTaxesAssociationsRequest{
+		EntityType: entityType,
+		EntityID:   entityID,
+		TaxRateID:  taxRateID,
+	}
+
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionRetries,
@@ -67,10 +73,6 @@ func (s *TaxAssociations) GetTaxesAssociations(ctx context.Context, request comp
 		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
-	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "Request", "json", `request:"mediaType=application/json"`)
-	if err != nil {
-		return nil, err
-	}
 
 	timeout := o.Timeout
 	if timeout == nil {
@@ -83,14 +85,15 @@ func (s *TaxAssociations) GetTaxesAssociations(ctx context.Context, request comp
 		defer cancel()
 	}
 
-	req, err := http.NewRequestWithContext(ctx, "GET", opURL, bodyReader)
+	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error creating request: %w", err)
 	}
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
-	if reqContentType != "" {
-		req.Header.Set("Content-Type", reqContentType)
+
+	if err := utils.PopulateQueryParams(ctx, req, request, nil, nil); err != nil {
+		return nil, fmt.Errorf("error populating query params: %w", err)
 	}
 
 	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
