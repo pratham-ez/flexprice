@@ -1,0 +1,9 @@
+# PutSubscriptionsLineitemsIDRequest
+
+
+## Fields
+
+| Field                                                                                                              | Type                                                                                                               | Required                                                                                                           | Description                                                                                                        |
+| ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| `id`                                                                                                               | *str*                                                                                                              | :heavy_check_mark:                                                                                                 | Line Item ID                                                                                                       |
+| `body`                                                                                                             | [components.DtoUpdateSubscriptionLineItemRequest](../../models/components/dtoupdatesubscriptionlineitemrequest.md) | :heavy_check_mark:                                                                                                 | Update Line Item Request                                                                                           |

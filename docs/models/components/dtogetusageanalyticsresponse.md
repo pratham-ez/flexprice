@@ -1,0 +1,10 @@
+# DtoGetUsageAnalyticsResponse
+
+
+## Fields
+
+| Field                                                                                    | Type                                                                                     | Required                                                                                 | Description                                                                              |
+| ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `currency`                                                                               | *Optional[str]*                                                                          | :heavy_minus_sign:                                                                       | N/A                                                                                      |
+| `items`                                                                                  | List[[components.DtoUsageAnalyticItem](../../models/components/dtousageanalyticitem.md)] | :heavy_minus_sign:                                                                       | N/A                                                                                      |
+| `total_cost`                                                                             | *Optional[str]*                                                                          | :heavy_minus_sign:                                                                       | N/A                                                                                      |

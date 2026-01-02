@@ -1,0 +1,9 @@
+# PostWalletsTransactionsSearchRequest
+
+
+## Fields
+
+| Field                                                                                                        | Type                                                                                                         | Required                                                                                                     | Description                                                                                                  |
+| ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| `expand_param`                                                                                               | *Optional[str]*                                                                                              | :heavy_minus_sign:                                                                                           | Expand fields (e.g., customer,created_by_user,wallet)                                                        |
+| `body`                                                                                                       | [Optional[components.TypesWalletTransactionFilter]](../../models/components/typeswallettransactionfilter.md) | :heavy_minus_sign:                                                                                           | Filter                                                                                                       |

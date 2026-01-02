@@ -1,0 +1,10 @@
+# DtoCancelSubscriptionRequest
+
+
+## Fields
+
+| Field                                                                                            | Type                                                                                             | Required                                                                                         | Description                                                                                      |
+| ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| `cancellation_type`                                                                              | [components.TypesCancellationType](../../models/components/typescancellationtype.md)             | :heavy_check_mark:                                                                               | N/A                                                                                              |
+| `proration_behavior`                                                                             | [Optional[components.TypesProrationBehavior]](../../models/components/typesprorationbehavior.md) | :heavy_minus_sign:                                                                               | N/A                                                                                              |
+| `reason`                                                                                         | *Optional[str]*                                                                                  | :heavy_minus_sign:                                                                               | Reason for cancellation (for audit and business intelligence)                                    |
