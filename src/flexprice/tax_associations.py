@@ -7,27 +7,16 @@ from flexprice._hooks import HookContext
 from flexprice.models import components, errors, operations
 from flexprice.types import OptionalNullable, UNSET
 from flexprice.utils.unmarshal_json_response import unmarshal_json_response
-from typing import Any, Dict, List, Mapping, Optional
+from typing import Any, Dict, Mapping, Optional
 
 
 class TaxAssociations(BaseSDK):
     def get_taxes_associations(
         self,
         *,
-        auto_apply: Optional[bool] = None,
-        currency: Optional[str] = None,
-        end_time: Optional[str] = None,
+        entity_type: Optional[str] = None,
         entity_id: Optional[str] = None,
-        entity_type: Optional[components.TypesTaxRateEntityType] = None,
-        expand: Optional[str] = None,
-        limit: Optional[int] = None,
-        offset: Optional[int] = None,
-        order: Optional[components.TypesTaxAssociationFilterOrder] = None,
-        sort: Optional[str] = None,
-        start_time: Optional[str] = None,
-        status: Optional[components.TypesStatus] = None,
-        tax_association_ids: Optional[List[str]] = None,
-        tax_rate_ids: Optional[List[str]] = None,
+        tax_rate_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -37,20 +26,9 @@ class TaxAssociations(BaseSDK):
 
         List tax associations
 
-        :param auto_apply:
-        :param currency:
-        :param end_time:
-        :param entity_id:
-        :param entity_type:
-        :param expand:
-        :param limit:
-        :param offset:
-        :param order:
-        :param sort:
-        :param start_time:
-        :param status:
-        :param tax_association_ids:
-        :param tax_rate_ids:
+        :param entity_type: Entity Type
+        :param entity_id: Entity ID
+        :param tax_rate_id: Tax Rate ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -66,21 +44,10 @@ class TaxAssociations(BaseSDK):
         else:
             base_url = self._get_url(base_url, url_variables)
 
-        request = components.TypesTaxAssociationFilter(
-            auto_apply=auto_apply,
-            currency=currency,
-            end_time=end_time,
-            entity_id=entity_id,
+        request = operations.GetTaxesAssociationsRequest(
             entity_type=entity_type,
-            expand=expand,
-            limit=limit,
-            offset=offset,
-            order=order,
-            sort=sort,
-            start_time=start_time,
-            status=status,
-            tax_association_ids=tax_association_ids,
-            tax_rate_ids=tax_rate_ids,
+            entity_id=entity_id,
+            tax_rate_id=tax_rate_id,
         )
 
         req = self._build_request(
@@ -89,16 +56,13 @@ class TaxAssociations(BaseSDK):
             base_url=base_url,
             url_variables=url_variables,
             request=request,
-            request_body_required=True,
+            request_body_required=False,
             request_has_path_params=False,
             request_has_query_params=True,
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
             security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", components.TypesTaxAssociationFilter
-            ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -159,20 +123,9 @@ class TaxAssociations(BaseSDK):
     async def get_taxes_associations_async(
         self,
         *,
-        auto_apply: Optional[bool] = None,
-        currency: Optional[str] = None,
-        end_time: Optional[str] = None,
+        entity_type: Optional[str] = None,
         entity_id: Optional[str] = None,
-        entity_type: Optional[components.TypesTaxRateEntityType] = None,
-        expand: Optional[str] = None,
-        limit: Optional[int] = None,
-        offset: Optional[int] = None,
-        order: Optional[components.TypesTaxAssociationFilterOrder] = None,
-        sort: Optional[str] = None,
-        start_time: Optional[str] = None,
-        status: Optional[components.TypesStatus] = None,
-        tax_association_ids: Optional[List[str]] = None,
-        tax_rate_ids: Optional[List[str]] = None,
+        tax_rate_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -182,20 +135,9 @@ class TaxAssociations(BaseSDK):
 
         List tax associations
 
-        :param auto_apply:
-        :param currency:
-        :param end_time:
-        :param entity_id:
-        :param entity_type:
-        :param expand:
-        :param limit:
-        :param offset:
-        :param order:
-        :param sort:
-        :param start_time:
-        :param status:
-        :param tax_association_ids:
-        :param tax_rate_ids:
+        :param entity_type: Entity Type
+        :param entity_id: Entity ID
+        :param tax_rate_id: Tax Rate ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -211,21 +153,10 @@ class TaxAssociations(BaseSDK):
         else:
             base_url = self._get_url(base_url, url_variables)
 
-        request = components.TypesTaxAssociationFilter(
-            auto_apply=auto_apply,
-            currency=currency,
-            end_time=end_time,
-            entity_id=entity_id,
+        request = operations.GetTaxesAssociationsRequest(
             entity_type=entity_type,
-            expand=expand,
-            limit=limit,
-            offset=offset,
-            order=order,
-            sort=sort,
-            start_time=start_time,
-            status=status,
-            tax_association_ids=tax_association_ids,
-            tax_rate_ids=tax_rate_ids,
+            entity_id=entity_id,
+            tax_rate_id=tax_rate_id,
         )
 
         req = self._build_request_async(
@@ -234,16 +165,13 @@ class TaxAssociations(BaseSDK):
             base_url=base_url,
             url_variables=url_variables,
             request=request,
-            request_body_required=True,
+            request_body_required=False,
             request_has_path_params=False,
             request_has_query_params=True,
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
             security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", components.TypesTaxAssociationFilter
-            ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )

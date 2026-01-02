@@ -950,11 +950,6 @@ if TYPE_CHECKING:
     from .types_syncconfig import TypesSyncConfig, TypesSyncConfigTypedDict
     from .types_taskstatus import TypesTaskStatus
     from .types_tasktype import TypesTaskType
-    from .types_taxassociationfilter import (
-        TypesTaxAssociationFilter,
-        TypesTaxAssociationFilterOrder,
-        TypesTaxAssociationFilterTypedDict,
-    )
     from .types_taxrateentitytype import TypesTaxRateEntityType
     from .types_taxratescope import TypesTaxRateScope
     from .types_taxratestatus import TypesTaxRateStatus
@@ -1604,9 +1599,6 @@ __all__ = [
     "TypesSyncConfigTypedDict",
     "TypesTaskStatus",
     "TypesTaskType",
-    "TypesTaxAssociationFilter",
-    "TypesTaxAssociationFilterOrder",
-    "TypesTaxAssociationFilterTypedDict",
     "TypesTaxRateEntityType",
     "TypesTaxRateScope",
     "TypesTaxRateStatus",
@@ -2227,9 +2219,6 @@ _dynamic_imports: dict[str, str] = {
     "TypesSyncConfigTypedDict": ".types_syncconfig",
     "TypesTaskStatus": ".types_taskstatus",
     "TypesTaskType": ".types_tasktype",
-    "TypesTaxAssociationFilter": ".types_taxassociationfilter",
-    "TypesTaxAssociationFilterOrder": ".types_taxassociationfilter",
-    "TypesTaxAssociationFilterTypedDict": ".types_taxassociationfilter",
     "TypesTaxRateEntityType": ".types_taxrateentitytype",
     "TypesTaxRateScope": ".types_taxratescope",
     "TypesTaxRateStatus": ".types_taxratestatus",

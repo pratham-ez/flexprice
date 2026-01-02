@@ -319,6 +319,10 @@ if TYPE_CHECKING:
         GetTasksScheduledIDRequest,
         GetTasksScheduledIDRequestTypedDict,
     )
+    from .get_taxes_associations import (
+        GetTaxesAssociationsRequest,
+        GetTaxesAssociationsRequestTypedDict,
+    )
     from .get_taxes_associations_id_ import (
         GetTaxesAssociationsIDRequest,
         GetTaxesAssociationsIDRequestTypedDict,
@@ -726,6 +730,8 @@ __all__ = [
     "GetTasksStatus",
     "GetTaxesAssociationsIDRequest",
     "GetTaxesAssociationsIDRequestTypedDict",
+    "GetTaxesAssociationsRequest",
+    "GetTaxesAssociationsRequestTypedDict",
     "GetTaxesRatesIDRequest",
     "GetTaxesRatesIDRequestTypedDict",
     "GetTaxesRatesOrder",
@@ -1066,6 +1072,8 @@ _dynamic_imports: dict[str, str] = {
     "GetTasksScheduledRequestTypedDict": ".get_tasks_scheduled",
     "GetTasksScheduledIDRequest": ".get_tasks_scheduled_id_",
     "GetTasksScheduledIDRequestTypedDict": ".get_tasks_scheduled_id_",
+    "GetTaxesAssociationsRequest": ".get_taxes_associations",
+    "GetTaxesAssociationsRequestTypedDict": ".get_taxes_associations",
     "GetTaxesAssociationsIDRequest": ".get_taxes_associations_id_",
     "GetTaxesAssociationsIDRequestTypedDict": ".get_taxes_associations_id_",
     "GetTaxesRatesOrder": ".get_taxes_rates",
