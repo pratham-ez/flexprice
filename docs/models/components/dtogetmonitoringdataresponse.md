@@ -1,0 +1,11 @@
+# DtoGetMonitoringDataResponse
+
+
+## Fields
+
+| Field                                                                            | Type                                                                             | Required                                                                         | Description                                                                      |
+| -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `ConsumptionLag`                                                                 | **int64*                                                                         | :heavy_minus_sign:                                                               | N/A                                                                              |
+| `Points`                                                                         | [][components.DtoEventCountPoint](../../models/components/dtoeventcountpoint.md) | :heavy_minus_sign:                                                               | N/A                                                                              |
+| `PostProcessingLag`                                                              | **int64*                                                                         | :heavy_minus_sign:                                                               | N/A                                                                              |
+| `TotalCount`                                                                     | **int64*                                                                         | :heavy_minus_sign:                                                               | N/A                                                                              |
