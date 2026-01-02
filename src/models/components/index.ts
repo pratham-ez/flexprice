@@ -133,6 +133,7 @@ export * from "./dtolistsecretsresponse.js";
 export * from "./dtolistsubscriptionpausesresponse.js";
 export * from "./dtolistsubscriptionsresponse.js";
 export * from "./dtolisttasksresponse.js";
+export * from "./dtolisttaxassociationsresponse.js";
 export * from "./dtolistusersresponse.js";
 export * from "./dtolistwallettransactionsresponse.js";
 export * from "./dtologinrequest.js";

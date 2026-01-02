@@ -83,6 +83,7 @@ export * from "./gettasksid.js";
 export * from "./gettasksresult.js";
 export * from "./gettasksscheduled.js";
 export * from "./gettasksscheduledid.js";
+export * from "./gettaxesassociations.js";
 export * from "./gettaxesassociationsid.js";
 export * from "./gettaxesrates.js";
 export * from "./gettaxesratesid.js";

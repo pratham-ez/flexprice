@@ -4,6 +4,7 @@
  */
 
 import { taxAssociationsDeleteTaxesAssociationsId } from "../funcs/taxAssociationsDeleteTaxesAssociationsId.js";
+import { taxAssociationsGetTaxesAssociations } from "../funcs/taxAssociationsGetTaxesAssociations.js";
 import { taxAssociationsGetTaxesAssociationsId } from "../funcs/taxAssociationsGetTaxesAssociationsId.js";
 import { taxAssociationsPostTaxesAssociations } from "../funcs/taxAssociationsPostTaxesAssociations.js";
 import { taxAssociationsPutTaxesAssociationsId } from "../funcs/taxAssociationsPutTaxesAssociationsId.js";
@@ -12,6 +13,27 @@ import * as components from "../models/components/index.js";
 import { unwrapAsync } from "../types/fp.js";
 
 export class TaxAssociations extends ClientSDK {
+  /**
+   * List tax associations
+   *
+   * @remarks
+   * List tax associations
+   */
+  async getTaxesAssociations(
+    entityType?: string | undefined,
+    entityId?: string | undefined,
+    taxRateId?: string | undefined,
+    options?: RequestOptions,
+  ): Promise<components.DtoListTaxAssociationsResponse> {
+    return unwrapAsync(taxAssociationsGetTaxesAssociations(
+      this,
+      entityType,
+      entityId,
+      taxRateId,
+      options,
+    ));
+  }
+
   /**
    * Create Tax Association
    *

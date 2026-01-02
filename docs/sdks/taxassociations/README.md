@@ -4,10 +4,86 @@
 
 ### Available Operations
 
+* [getTaxesAssociations](#gettaxesassociations) - List tax associations
 * [postTaxesAssociations](#posttaxesassociations) - Create Tax Association
 * [getTaxesAssociationsId](#gettaxesassociationsid) - Get Tax Association
 * [putTaxesAssociationsId](#puttaxesassociationsid) - Update tax association
 * [deleteTaxesAssociationsId](#deletetaxesassociationsid) - Delete tax association
+
+## getTaxesAssociations
+
+List tax associations
+
+### Example Usage
+
+<!-- UsageSnippet language="typescript" operationID="get_/taxes/associations" method="get" path="/taxes/associations" -->
+```typescript
+import { FlexPrice } from "@flexprice/sdk";
+
+const flexPrice = new FlexPrice({
+  serverURL: "https://api.example.com",
+  apiKeyAuth: "<YOUR_API_KEY_HERE>",
+});
+
+async function run() {
+  const result = await flexPrice.taxAssociations.getTaxesAssociations();
+
+  console.log(result);
+}
+
+run();
+```
+
+### Standalone function
+
+The standalone function version of this method:
+
+```typescript
+import { FlexPriceCore } from "@flexprice/sdk/core.js";
+import { taxAssociationsGetTaxesAssociations } from "@flexprice/sdk/funcs/taxAssociationsGetTaxesAssociations.js";
+
+// Use `FlexPriceCore` for best tree-shaking performance.
+// You can create one instance of it to use across an application.
+const flexPrice = new FlexPriceCore({
+  serverURL: "https://api.example.com",
+  apiKeyAuth: "<YOUR_API_KEY_HERE>",
+});
+
+async function run() {
+  const res = await taxAssociationsGetTaxesAssociations(flexPrice);
+  if (res.ok) {
+    const { value: result } = res;
+    console.log(result);
+  } else {
+    console.log("taxAssociationsGetTaxesAssociations failed:", res.error);
+  }
+}
+
+run();
+```
+
+### Parameters
+
+| Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `entityType`                                                                                                                                                                   | *string*                                                                                                                                                                       | :heavy_minus_sign:                                                                                                                                                             | Entity Type                                                                                                                                                                    |
+| `entityId`                                                                                                                                                                     | *string*                                                                                                                                                                       | :heavy_minus_sign:                                                                                                                                                             | Entity ID                                                                                                                                                                      |
+| `taxRateId`                                                                                                                                                                    | *string*                                                                                                                                                                       | :heavy_minus_sign:                                                                                                                                                             | Tax Rate ID                                                                                                                                                                    |
+| `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
+| `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
+| `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |
+
+### Response
+
+**Promise\<[components.DtoListTaxAssociationsResponse](../../models/components/dtolisttaxassociationsresponse.md)\>**
+
+### Errors
+
+| Error Type                   | Status Code                  | Content Type                 |
+| ---------------------------- | ---------------------------- | ---------------------------- |
+| errors.ErrorsErrorResponse   | 400                          | application/json             |
+| errors.ErrorsErrorResponse   | 500                          | application/json             |
+| errors.FlexPriceDefaultError | 4XX, 5XX                     | \*/\*                        |
 
 ## postTaxesAssociations
 
