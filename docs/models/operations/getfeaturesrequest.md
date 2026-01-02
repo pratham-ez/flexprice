@@ -1,0 +1,26 @@
+# GetFeaturesRequest
+
+## Example Usage
+
+```typescript
+import { GetFeaturesRequest } from "@flexprice/sdk/models/operations";
+
+let value: GetFeaturesRequest = {};
+```
+
+## Fields
+
+| Field                                                                        | Type                                                                         | Required                                                                     | Description                                                                  |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `endTime`                                                                    | *string*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `expand`                                                                     | *string*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `featureIds`                                                                 | *string*[]                                                                   | :heavy_minus_sign:                                                           | Feature specific filters                                                     |
+| `limit`                                                                      | *number*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `lookupKey`                                                                  | *string*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `lookupKeys`                                                                 | *string*[]                                                                   | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `meterIds`                                                                   | *string*[]                                                                   | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `nameContains`                                                               | *string*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `offset`                                                                     | *number*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `order`                                                                      | [operations.GetFeaturesOrder](../../models/operations/getfeaturesorder.md)   | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `startTime`                                                                  | *string*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `status`                                                                     | [operations.GetFeaturesStatus](../../models/operations/getfeaturesstatus.md) | :heavy_minus_sign:                                                           | N/A                                                                          |

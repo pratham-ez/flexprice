@@ -1,0 +1,32 @@
+# DtoWalletResponse
+
+## Example Usage
+
+```typescript
+import { DtoWalletResponse } from "@flexprice/sdk/models/components";
+
+let value: DtoWalletResponse = {};
+```
+
+## Fields
+
+| Field                                                                        | Type                                                                         | Required                                                                     | Description                                                                  |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `alertConfig`                                                                | [components.TypesAlertConfig](../../models/components/typesalertconfig.md)   | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `alertEnabled`                                                               | *boolean*                                                                    | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `alertState`                                                                 | *string*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `autoTopup`                                                                  | [components.TypesAutoTopup](../../models/components/typesautotopup.md)       | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `balance`                                                                    | *string*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `config`                                                                     | [components.TypesWalletConfig](../../models/components/typeswalletconfig.md) | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `conversionRate`                                                             | *string*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `createdAt`                                                                  | *string*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `creditBalance`                                                              | *string*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `currency`                                                                   | *string*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `customerId`                                                                 | *string*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `description`                                                                | *string*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `id`                                                                         | *string*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `metadata`                                                                   | Record<string, *string*>                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `name`                                                                       | *string*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `updatedAt`                                                                  | *string*                                                                     | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `walletStatus`                                                               | [components.TypesWalletStatus](../../models/components/typeswalletstatus.md) | :heavy_minus_sign:                                                           | N/A                                                                          |
+| `walletType`                                                                 | [components.TypesWalletType](../../models/components/typeswallettype.md)     | :heavy_minus_sign:                                                           | N/A                                                                          |
