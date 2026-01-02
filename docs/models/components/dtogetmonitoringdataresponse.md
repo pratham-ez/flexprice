@@ -1,0 +1,11 @@
+# DtoGetMonitoringDataResponse
+
+
+## Fields
+
+| Field                                                                                | Type                                                                                 | Required                                                                             | Description                                                                          |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| `consumption_lag`                                                                    | *Optional[int]*                                                                      | :heavy_minus_sign:                                                                   | N/A                                                                                  |
+| `points`                                                                             | List[[components.DtoEventCountPoint](../../models/components/dtoeventcountpoint.md)] | :heavy_minus_sign:                                                                   | N/A                                                                                  |
+| `post_processing_lag`                                                                | *Optional[int]*                                                                      | :heavy_minus_sign:                                                                   | N/A                                                                                  |
+| `total_count`                                                                        | *Optional[int]*                                                                      | :heavy_minus_sign:                                                                   | N/A                                                                                  |

@@ -1,0 +1,12 @@
+# DtoUserResponse
+
+
+## Fields
+
+| Field                                                                                  | Type                                                                                   | Required                                                                               | Description                                                                            |
+| -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `email`                                                                                | *Optional[str]*                                                                        | :heavy_minus_sign:                                                                     | Empty for service accounts                                                             |
+| `id`                                                                                   | *Optional[str]*                                                                        | :heavy_minus_sign:                                                                     | N/A                                                                                    |
+| `roles`                                                                                | List[*str*]                                                                            | :heavy_minus_sign:                                                                     | N/A                                                                                    |
+| `tenant`                                                                               | [Optional[components.DtoTenantResponse]](../../models/components/dtotenantresponse.md) | :heavy_minus_sign:                                                                     | N/A                                                                                    |
+| `type`                                                                                 | [Optional[components.TypesUserType]](../../models/components/typesusertype.md)         | :heavy_minus_sign:                                                                     | N/A                                                                                    |

@@ -1,0 +1,10 @@
+# DtoAggregatedFeature
+
+
+## Fields
+
+| Field                                                                                                | Type                                                                                                 | Required                                                                                             | Description                                                                                          |
+| ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `entitlement`                                                                                        | [Optional[components.DtoAggregatedEntitlement]](../../models/components/dtoaggregatedentitlement.md) | :heavy_minus_sign:                                                                                   | N/A                                                                                                  |
+| `feature`                                                                                            | [Optional[components.DtoFeatureResponse]](../../models/components/dtofeatureresponse.md)             | :heavy_minus_sign:                                                                                   | N/A                                                                                                  |
+| `sources`                                                                                            | List[[components.DtoEntitlementSource](../../models/components/dtoentitlementsource.md)]             | :heavy_minus_sign:                                                                                   | N/A                                                                                                  |

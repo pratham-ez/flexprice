@@ -1,0 +1,11 @@
+# TypesAlertSettings
+
+
+## Fields
+
+| Field                                                                                      | Type                                                                                       | Required                                                                                   | Description                                                                                |
+| ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| `alert_enabled`                                                                            | *Optional[bool]*                                                                           | :heavy_minus_sign:                                                                         | N/A                                                                                        |
+| `critical`                                                                                 | [Optional[components.TypesAlertThreshold]](../../models/components/typesalertthreshold.md) | :heavy_minus_sign:                                                                         | N/A                                                                                        |
+| `info`                                                                                     | [Optional[components.TypesAlertThreshold]](../../models/components/typesalertthreshold.md) | :heavy_minus_sign:                                                                         | N/A                                                                                        |
+| `warning`                                                                                  | [Optional[components.TypesAlertThreshold]](../../models/components/typesalertthreshold.md) | :heavy_minus_sign:                                                                         | N/A                                                                                        |

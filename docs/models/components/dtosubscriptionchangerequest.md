@@ -1,0 +1,16 @@
+# DtoSubscriptionChangeRequest
+
+Request object for changing a subscription plan (upgrade/downgrade)
+
+
+## Fields
+
+| Field                                                                                  | Type                                                                                   | Required                                                                               | Description                                                                            |
+| -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `billing_cadence`                                                                      | [components.TypesBillingCadence](../../models/components/typesbillingcadence.md)       | :heavy_check_mark:                                                                     | N/A                                                                                    |
+| `billing_cycle`                                                                        | [components.TypesBillingCycle](../../models/components/typesbillingcycle.md)           | :heavy_check_mark:                                                                     | N/A                                                                                    |
+| `billing_period`                                                                       | [components.TypesBillingPeriod](../../models/components/typesbillingperiod.md)         | :heavy_check_mark:                                                                     | N/A                                                                                    |
+| `billing_period_count`                                                                 | *Optional[int]*                                                                        | :heavy_minus_sign:                                                                     | billing_period_count is the billing period count for the new subscription              |
+| `metadata`                                                                             | Dict[str, *str*]                                                                       | :heavy_minus_sign:                                                                     | metadata contains additional key-value pairs for storing extra information             |
+| `proration_behavior`                                                                   | [components.TypesProrationBehavior](../../models/components/typesprorationbehavior.md) | :heavy_check_mark:                                                                     | N/A                                                                                    |
+| `target_plan_id`                                                                       | *str*                                                                                  | :heavy_check_mark:                                                                     | target_plan_id is the ID of the new plan to change to (required)                       |

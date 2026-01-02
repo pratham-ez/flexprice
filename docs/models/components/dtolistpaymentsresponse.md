@@ -1,0 +1,9 @@
+# DtoListPaymentsResponse
+
+
+## Fields
+
+| Field                                                                                              | Type                                                                                               | Required                                                                                           | Description                                                                                        |
+| -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `items`                                                                                            | List[[components.DtoPaymentResponse](../../models/components/dtopaymentresponse.md)]               | :heavy_minus_sign:                                                                                 | N/A                                                                                                |
+| `pagination`                                                                                       | [Optional[components.TypesPaginationResponse]](../../models/components/typespaginationresponse.md) | :heavy_minus_sign:                                                                                 | N/A                                                                                                |

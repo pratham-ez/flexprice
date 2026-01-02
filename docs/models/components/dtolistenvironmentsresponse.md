@@ -1,0 +1,11 @@
+# DtoListEnvironmentsResponse
+
+
+## Fields
+
+| Field                                                                                        | Type                                                                                         | Required                                                                                     | Description                                                                                  |
+| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `environments`                                                                               | List[[components.DtoEnvironmentResponse](../../models/components/dtoenvironmentresponse.md)] | :heavy_minus_sign:                                                                           | N/A                                                                                          |
+| `limit`                                                                                      | *Optional[int]*                                                                              | :heavy_minus_sign:                                                                           | N/A                                                                                          |
+| `offset`                                                                                     | *Optional[int]*                                                                              | :heavy_minus_sign:                                                                           | N/A                                                                                          |
+| `total`                                                                                      | *Optional[int]*                                                                              | :heavy_minus_sign:                                                                           | N/A                                                                                          |
