@@ -1,6 +1,6 @@
 {
   "name": "@flexprice/sdk",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "FlexPrice",
   "main": "./index.js",
   "sideEffects": false,
