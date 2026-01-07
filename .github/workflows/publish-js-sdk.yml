@@ -75,6 +75,15 @@ jobs:
           
           COPIED=0
           
+          # Copy README.md if it exists
+          if [ -f "api/custom/javascript/README.md" ]; then
+            cp api/custom/javascript/README.md api/javascript/ 2>/dev/null || true
+            echo "✓ Copied README.md"
+            COPIED=$((COPIED + 1))
+          else
+            echo "⏭️  Skipping: README.md not found"
+          fi
+          
           # Copy examples folder
           if [ -d "api/custom/javascript/examples" ] && [ "$(ls -A api/custom/javascript/examples 2>/dev/null)" ]; then
             mkdir -p api/javascript/examples
@@ -98,37 +107,6 @@ jobs:
             echo "✅ Successfully copied $COPIED custom file(s)/folder(s)"
           fi
           
-      - name: Cleanup incompatible files
-        working-directory: api/javascript
-        run: |
-          echo "🧹 Cleaning up incompatible files..."
-          
-          CLEANED=0
-          
-          # Remove CustomerPortal.ts if it was accidentally copied
-          if [ -f "src/apis/CustomerPortal.ts" ]; then
-            rm -f src/apis/CustomerPortal.ts 2>/dev/null || true
-            echo "✓ Removed incompatible CustomerPortal.ts"
-            CLEANED=$((CLEANED + 1))
-          fi
-          
-          # Remove empty apis directory if it exists
-          if [ -d "src/apis" ] && [ -z "$(ls -A src/apis 2>/dev/null)" ]; then
-            rmdir src/apis 2>/dev/null || true
-            echo "✓ Removed empty src/apis directory"
-            CLEANED=$((CLEANED + 1))
-          fi
-          
-          if [ $CLEANED -eq 0 ]; then
-            echo "✓ No incompatible files to clean"
-          else
-            echo "✓ Cleaned $CLEANED incompatible item(s)"
-          fi
-          
-          echo ""
-          echo "📁 Final SDK structure:"
-          ls -la src/ 2>/dev/null || echo "src/ directory not found"
-
       - name: Update version in package.json
         working-directory: api/javascript
         run: |

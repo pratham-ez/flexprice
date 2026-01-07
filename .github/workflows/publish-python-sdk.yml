@@ -119,15 +119,13 @@ jobs:
           
           COPIED=0
           
-          # Copy examples folder
-          if [ -d "api/custom/python/examples" ] && [ "$(ls -A api/custom/python/examples 2>/dev/null)" ]; then
-            mkdir -p api/python/examples
-            cp -r api/custom/python/examples/* api/python/examples/ 2>/dev/null || true
-            FILE_COUNT=$(ls -1 api/custom/python/examples 2>/dev/null | wc -l | tr -d ' ')
-            echo "✓ Copied examples folder ($FILE_COUNT files)"
+          # Copy README.md if it exists
+          if [ -f "api/custom/python/README.md" ]; then
+            cp api/custom/python/README.md api/python/ 2>/dev/null || true
+            echo "✓ Copied README.md"
             COPIED=$((COPIED + 1))
           else
-            echo "⏭️  Skipping: No examples found in api/custom/python/examples/"
+            echo "⏭️  Skipping: README.md not found"
           fi
           
           # Copy async_utils.py if it exists
@@ -140,20 +138,10 @@ jobs:
             echo "⏭️  Skipping: async_utils.py not found"
           fi
           
-          # Copy any other custom Python files
-          if [ -d "api/custom/python/utils" ] && [ "$(ls -A api/custom/python/utils 2>/dev/null)" ]; then
-            mkdir -p api/python/src/flexprice_sdk_test/utils
-            cp -r api/custom/python/utils/* api/python/src/flexprice_sdk_test/utils/ 2>/dev/null || true
-            echo "✓ Copied utils folder"
-            COPIED=$((COPIED + 1))
-          else
-            echo "⏭️  Skipping: No utils found in api/custom/python/utils/"
-          fi
-          
-          # Copy MANIFEST.in if it exists (required for packaging non-Python files)
+          # Copy MANIFEST.in if it exists (for future examples packaging)
           if [ -f "api/custom/python/MANIFEST.in" ]; then
             cp api/custom/python/MANIFEST.in api/python/ 2>/dev/null || true
-            echo "✓ Copied MANIFEST.in (for packaging examples)"
+            echo "✓ Copied MANIFEST.in (for future use)"
             COPIED=$((COPIED + 1))
           else
             echo "⏭️  Skipping: MANIFEST.in not found"
@@ -164,28 +152,6 @@ jobs:
           else
             echo "✅ Successfully copied $COPIED custom file(s)/folder(s)"
           fi
-
-      - name: Fix pyproject.toml for proper packaging
-        working-directory: api/python
-        run: |
-          echo "📝 Fixing pyproject.toml for proper packaging..."
-          
-          # Fix README reference if needed
-          if [ ! -f "README-PYPI.md" ] && [ -f "README.md" ]; then
-            sed -i 's/readme = "README-PYPI.md"/readme = "README.md"/' pyproject.toml || true
-            echo "✓ Fixed README reference to README.md"
-          fi
-          
-          # Add include-package-data if examples exist
-          if [ -d "examples" ] && [ "$(ls -A examples 2>/dev/null)" ]; then
-            if ! grep -q "include-package-data" pyproject.toml; then
-              # Add include-package-data on a new line after [tool.setuptools]
-              sed -i '/^\[tool\.setuptools\]/a\include-package-data = true' pyproject.toml
-              echo "✓ Enabled include-package-data in pyproject.toml"
-            fi
-          fi
-          
-          echo "✓ pyproject.toml ready for packaging"
 
       - name: Update version in pyproject.toml
         working-directory: api/python
