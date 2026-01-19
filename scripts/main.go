@@ -119,6 +119,21 @@ var commands = []Command{
 		Run:         internal.ImportFeatures,
 	},
 	{
+		Name:        "generate-vapi-features",
+		Description: "Generate VAPI features from provider/method/model CSV",
+		Run:         internal.GenerateVapiFeatures,
+	},
+	{
+		Name:        "generate-method-features",
+		Description: "Generate features for multiple method types from LLM pricing CSV",
+		Run:         internal.GenerateMethodFeatures,
+	},
+	{
+		Name:        "generate-tts-stt-features",
+		Description: "Generate TTS/STT features from synthesizers/transcribers pricing CSV",
+		Run:         internal.GenerateTtsStFeatures,
+	},
+	{
 		Name:        "migrate-cga",
 		Description: "Migrate existing Credit Grant Applications to new structure (ensure environment_id is set)",
 		Run:         internal.MigrateCGA,
@@ -178,6 +193,8 @@ func main() {
 		dryRun             string
 		planID             string
 		addonID            string
+		inputFile          string
+		outputFile         string
 	)
 
 	flag.BoolVar(&listCommands, "list", false, "List all available commands")
@@ -200,6 +217,8 @@ func main() {
 	flag.StringVar(&batchSize, "batch-size", "100", "Batch size for reprocessing")
 	flag.StringVar(&dryRun, "dry-run", "false", "Dry run mode (true/false)")
 	flag.StringVar(&addonID, "addon-id", "", "Addon ID for operations")
+	flag.StringVar(&inputFile, "input-file", "", "Input file path for CSV operations")
+	flag.StringVar(&outputFile, "output-file", "", "Output file path for CSV operations")
 	flag.Parse()
 
 	if listCommands {
@@ -268,6 +287,12 @@ func main() {
 	}
 	if dryRun != "" {
 		os.Setenv("DRY_RUN", dryRun)
+	}
+	if inputFile != "" {
+		os.Setenv("INPUT_FILE", inputFile)
+	}
+	if outputFile != "" {
+		os.Setenv("OUTPUT_FILE", outputFile)
 	}
 
 	// Find and run the command

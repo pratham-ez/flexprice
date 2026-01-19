@@ -1,0 +1,19 @@
+feature_name,event_name,aggregation_type,aggregation_field,price_per_unit
+azure-synthesizers-azure speech,azure-synthesizers-azure speech,SUM,numCharacters,0.000015
+cartesia-synthesizers-cartesia,cartesia-synthesizers-cartesia,SUM,numCharacters,0.00003
+elevenlabs-synthesizers-elevenlabs,elevenlabs-synthesizers-elevenlabs,SUM,numCharacters,0.00005
+hume-synthesizers-octave,hume-synthesizers-octave,SUM,numCharacters,0.000025
+hume-synthesizers-octave2,hume-synthesizers-octave2,SUM,numCharacters,0.0000125
+openai-synthesizers-openai speech,openai-synthesizers-openai speech,SUM,numCharacters,0.000015
+deepgram-synthesizers-deepgram tts,deepgram-synthesizers-deepgram tts,SUM,numCharacters,0.000015
+playht-synthesizers-playht,playht-synthesizers-playht,SUM,numCharacters,0.00009
+lmnt-synthesizers-lmnt,lmnt-synthesizers-lmnt,SUM,numCharacters,0.00008
+rime-synthesizers-rime,rime-synthesizers-rime,SUM,numCharacters,0.000015
+neuphonic-synthesizers-neuphonic,neuphonic-synthesizers-neuphonic,SUM,numCharacters,0
+minimax-synthesizers-minimax turbo,minimax-synthesizers-minimax turbo,SUM,numCharacters,0.00003
+minimax-synthesizers-minimax hd,minimax-synthesizers-minimax hd,SUM,numCharacters,0.00005
+tavus-synthesizers-tavus,tavus-synthesizers-tavus,SUM,durationMS,0.000004
+deepgram-transcribers-deepgram stt,deepgram-transcribers-deepgram stt,SUM,durationMS,0.0000000816667
+assemblyai-transcribers-assemblyai,assemblyai-transcribers-assemblyai,SUM,durationMS,0.0000000416667
+assemblyai-transcribers-assemblyai universal,assemblyai-transcribers-assemblyai universal,SUM,durationMS,0.0000000416667
+gladia-transcribers-gladia,gladia-transcribers-gladia,SUM,durationMS,0.00000021

@@ -1,0 +1,19 @@
+Provider,Model/Service,ServiceType,DurationCostPerSecond,CharCost/M
+Azure,Azure Speech,TTS,,15
+Cartesia,Cartesia,TTS,,30
+ElevenLabs,ElevenLabs,TTS,,50
+Hume,Octave,TTS,,25
+Hume,Octave2,TTS,,12.5
+OpenAI,OpenAI Speech,TTS,,15
+Deepgram,Deepgram TTS,TTS,,15
+PlayHT,PlayHT,TTS,,90
+LMNT,LMNT,TTS,,80
+Rime,Rime,TTS,,15
+Neuphonic,Neuphonic,TTS,,0
+Minimax,Minimax Turbo,TTS,,30
+Minimax,Minimax HD,TTS,,50
+Tavus,Tavus,TTS,0.004,
+Deepgram,Deepgram STT,STT,0.0000816667,
+AssemblyAI,AssemblyAI,STT,0.0000416667,
+AssemblyAI,AssemblyAI Universal,STT,0.0000416667,
+Gladia,Gladia,STT,0.00021,
