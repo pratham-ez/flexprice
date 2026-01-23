@@ -134,6 +134,11 @@ var commands = []Command{
 		Run:         internal.GenerateTtsStFeatures,
 	},
 	{
+		Name:        "generate-missing-price-features",
+		Description: "Generate features with 0 price from missing prices CSV",
+		Run:         internal.GenerateMissingPriceFeatures,
+	},
+	{
 		Name:        "migrate-cga",
 		Description: "Migrate existing Credit Grant Applications to new structure (ensure environment_id is set)",
 		Run:         internal.MigrateCGA,
