@@ -111,6 +111,10 @@ func TestEventExporter_PrepareData_CostColumn(t *testing.T) {
 	if records[0].Cost != "7.5" {
 		t.Errorf("expected Cost 7.5, got %q", records[0].Cost)
 	}
+	// price_amount = 2.5 (unit price)
+	if records[0].PriceAmount != "2.5" {
+		t.Errorf("expected PriceAmount 2.5, got %q", records[0].PriceAmount)
+	}
 	if records[0].PriceID != priceID {
 		t.Errorf("expected PriceID %q, got %q", priceID, records[0].PriceID)
 	}
@@ -295,5 +299,8 @@ func TestEventExporter_CSVHeadersIncludeCost(t *testing.T) {
 	headers := lines[0]
 	if !strings.Contains(headers, "cost") {
 		t.Errorf("expected CSV headers to include 'cost', got: %s", headers)
+	}
+	if !strings.Contains(headers, "price_amount") {
+		t.Errorf("expected CSV headers to include 'price_amount', got: %s", headers)
 	}
 }
