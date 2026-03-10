@@ -1,0 +1,67 @@
+feature_name	event_name	aggregation_type	aggregation_field	price_per_unit	cost_sheet
+anthropic-bedrock-BEDROCK_LLM-claude-opus-4-5-20251101-completionTokens	anthropic-bedrock-BEDROCK_LLM-claude-opus-4-5-20251101	SUM	completionTokens	0.000025	0.000022875000000
+anthropic-bedrock-BEDROCK_LLM-claude-opus-4-5-20251101-promptTokens	anthropic-bedrock-BEDROCK_LLM-claude-opus-4-5-20251101	SUM	promptTokens	0.000005	0.000004575000000
+anthropic-bedrock-BEDROCK_LLM-completionTokens	anthropic-bedrock-BEDROCK_LLM	SUM	completionTokens	0.000025	0.000022875000000
+anthropic-bedrock-BEDROCK_LLM-promptTokens	anthropic-bedrock-BEDROCK_LLM	SUM	promptTokens	0.000005	0.000004575000000
+anthropic-knowledge-base-claude-3-sonnet-20240229-cacheCreationInputTokens	anthropic-knowledge-base-claude-3-sonnet-20240229	SUM	cacheCreationInputTokens	0.00000375	0.000003431250000
+anthropic-knowledge-base-claude-3-sonnet-20240229-cacheReadInputTokens	anthropic-knowledge-base-claude-3-sonnet-20240229	SUM	cacheReadInputTokens	0.0000003	0.000000274500000
+anthropic-knowledge-base-claude-sonnet-4-6-cacheCreationInputTokens	anthropic-knowledge-base-claude-sonnet-4-6	SUM	cacheCreationInputTokens	0.00000375	0.000003431250000
+anthropic-knowledge-base-claude-sonnet-4-6-cacheReadInputTokens	anthropic-knowledge-base-claude-sonnet-4-6	SUM	cacheReadInputTokens	0.0000003	0.000000274500000
+anthropic-knowledge-base-claude-sonnet-4-6-completionTokens	anthropic-knowledge-base-claude-sonnet-4-6	SUM	completionTokens	0.000015	0.000013725000000
+anthropic-knowledge-base-claude-sonnet-4-6-promptTokens	anthropic-knowledge-base-claude-sonnet-4-6	SUM	promptTokens	0.000003	0.000002745000000
+anthropic-modeling-completion-claude-3-sonnet-20240229-cacheCreationInputTokens	anthropic-modeling-completion-claude-3-sonnet-20240229	SUM	cacheCreationInputTokens	0.00000375	0.000003431250000
+anthropic-modeling-completion-claude-3-sonnet-20240229-cacheReadInputTokens	anthropic-modeling-completion-claude-3-sonnet-20240229	SUM	cacheReadInputTokens	0.0000003	0.000000274500000
+anthropic-modeling-completion-claude-sonnet-4-6-cacheCreationInputTokens	anthropic-modeling-completion-claude-sonnet-4-6	SUM	cacheCreationInputTokens	0.00000375	0.000003431250000
+anthropic-modeling-completion-claude-sonnet-4-6-cacheReadInputTokens	anthropic-modeling-completion-claude-sonnet-4-6	SUM	cacheReadInputTokens	0.0000003	0.000000274500000
+anthropic-modeling-completion-claude-sonnet-4-6-completionTokens	anthropic-modeling-completion-claude-sonnet-4-6	SUM	completionTokens	0.000015	0.000013725000000
+anthropic-modeling-completion-claude-sonnet-4-6-promptTokens	anthropic-modeling-completion-claude-sonnet-4-6	SUM	promptTokens	0.000003	0.000002745000000
+anthropic-voicemail-detection-claude-3-sonnet-20240229-cacheCreationInputTokens	anthropic-voicemail-detection-claude-3-sonnet-20240229	SUM	cacheCreationInputTokens	0.00000375	0.000003431250000
+anthropic-voicemail-detection-claude-3-sonnet-20240229-cacheReadInputTokens	anthropic-voicemail-detection-claude-3-sonnet-20240229	SUM	cacheReadInputTokens	0.0000003	0.000000274500000
+anthropic-voicemail-detection-claude-sonnet-4-6-cacheCreationInputTokens	anthropic-voicemail-detection-claude-sonnet-4-6	SUM	cacheCreationInputTokens	0.00000375	0.000003431250000
+anthropic-voicemail-detection-claude-sonnet-4-6-cacheReadInputTokens	anthropic-voicemail-detection-claude-sonnet-4-6	SUM	cacheReadInputTokens	0.0000003	0.000000274500000
+anthropic-voicemail-detection-claude-sonnet-4-6-completionTokens	anthropic-voicemail-detection-claude-sonnet-4-6	SUM	completionTokens	0.000015	0.000013725000000
+anthropic-voicemail-detection-claude-sonnet-4-6-promptTokens	anthropic-voicemail-detection-claude-sonnet-4-6	SUM	promptTokens	0.000003	0.000002745000000
+google-transcriber-completionTokens	google-transcriber	SUM	completionTokens	0.0000004	
+google-transcriber-gemini-1.0-pro-completionTokens	google-transcriber-gemini-1.0-pro	SUM	completionTokens	0.0000015	
+google-transcriber-gemini-1.0-pro-promptTokens	google-transcriber-gemini-1.0-pro	SUM	promptTokens	0.0000005	
+google-transcriber-gemini-1.5-flash-001-completionTokens	google-transcriber-gemini-1.5-flash-001	SUM	completionTokens	0.0000003	
+google-transcriber-gemini-1.5-flash-001-promptTokens	google-transcriber-gemini-1.5-flash-001	SUM	promptTokens	0.000000075	
+google-transcriber-gemini-1.5-flash-002-completionTokens	google-transcriber-gemini-1.5-flash-002	SUM	completionTokens	0.0000003	
+google-transcriber-gemini-1.5-flash-002-promptTokens	google-transcriber-gemini-1.5-flash-002	SUM	promptTokens	0.000000075	
+google-transcriber-gemini-1.5-flash-8b-001-completionTokens	google-transcriber-gemini-1.5-flash-8b-001	SUM	completionTokens	0.00000015	
+google-transcriber-gemini-1.5-flash-8b-001-promptTokens	google-transcriber-gemini-1.5-flash-8b-001	SUM	promptTokens	0.0000000375	
+google-transcriber-gemini-1.5-flash-8b-completionTokens	google-transcriber-gemini-1.5-flash-8b	SUM	completionTokens	0.00000015	
+google-transcriber-gemini-1.5-flash-8b-latest-completionTokens	google-transcriber-gemini-1.5-flash-8b-latest	SUM	completionTokens	0.00000015	
+google-transcriber-gemini-1.5-flash-8b-latest-promptTokens	google-transcriber-gemini-1.5-flash-8b-latest	SUM	promptTokens	0.0000000375	
+google-transcriber-gemini-1.5-flash-8b-promptTokens	google-transcriber-gemini-1.5-flash-8b	SUM	promptTokens	0.0000000375	
+google-transcriber-gemini-1.5-flash-latest-completionTokens	google-transcriber-gemini-1.5-flash-latest	SUM	completionTokens	0.0000003	
+google-transcriber-gemini-1.5-flash-latest-promptTokens	google-transcriber-gemini-1.5-flash-latest	SUM	promptTokens	0.000000075	
+google-transcriber-gemini-1.5-pro-001-completionTokens	google-transcriber-gemini-1.5-pro-001	SUM	completionTokens	0.000005	
+google-transcriber-gemini-1.5-pro-001-promptTokens	google-transcriber-gemini-1.5-pro-001	SUM	promptTokens	0.00000125	
+google-transcriber-gemini-1.5-pro-002-completionTokens	google-transcriber-gemini-1.5-pro-002	SUM	completionTokens	0.000005	
+google-transcriber-gemini-1.5-pro-002-promptTokens	google-transcriber-gemini-1.5-pro-002	SUM	promptTokens	0.00000125	
+google-transcriber-gemini-1.5-pro-latest-completionTokens	google-transcriber-gemini-1.5-pro-latest	SUM	completionTokens	0.000005	
+google-transcriber-gemini-1.5-pro-latest-promptTokens	google-transcriber-gemini-1.5-pro-latest	SUM	promptTokens	0.00000125	
+google-transcriber-gemini-2.0-flash-001-completionTokens	google-transcriber-gemini-2.0-flash-001	SUM	completionTokens	0.0000004	0.000000360000000
+google-transcriber-gemini-2.0-flash-001-promptTokens	google-transcriber-gemini-2.0-flash-001	SUM	promptTokens	0.0000001	0.000000090000000
+google-transcriber-gemini-2.0-flash-latest-completionTokens	google-transcriber-gemini-2.0-flash-latest	SUM	completionTokens	0.0000004	0.000000360000000
+google-transcriber-gemini-2.0-flash-latest-promptTokens	google-transcriber-gemini-2.0-flash-latest	SUM	promptTokens	0.0000001	0.000000090000000
+google-transcriber-gemini-2.0-flash-lite-001-completionTokens	google-transcriber-gemini-2.0-flash-lite-001	SUM	completionTokens	0.0000003	0.000000270000000
+google-transcriber-gemini-2.0-flash-lite-001-promptTokens	google-transcriber-gemini-2.0-flash-lite-001	SUM	promptTokens	0.000000075	0.000000067500000
+google-transcriber-gemini-2.0-flash-lite-exp-completionTokens	google-transcriber-gemini-2.0-flash-lite-exp	SUM	completionTokens	0	0.000000000000000
+google-transcriber-gemini-2.0-flash-lite-exp-promptTokens	google-transcriber-gemini-2.0-flash-lite-exp	SUM	promptTokens	0	0.000000000000000
+google-transcriber-gemini-2.0-flash-thinking-exp-01-21-completionTokens	google-transcriber-gemini-2.0-flash-thinking-exp-01-21	SUM	completionTokens	0	0.000000000000000
+google-transcriber-gemini-2.0-flash-thinking-exp-01-21-promptTokens	google-transcriber-gemini-2.0-flash-thinking-exp-01-21	SUM	promptTokens	0	0.000000000000000
+google-transcriber-gemini-2.5-flash-lite-preview-06-17-completionTokens	google-transcriber-gemini-2.5-flash-lite-preview-06-17	SUM	completionTokens	0.0000004	0.000000360000000
+google-transcriber-gemini-2.5-flash-lite-preview-06-17-promptTokens	google-transcriber-gemini-2.5-flash-lite-preview-06-17	SUM	promptTokens	0.0000001	0.000000090000000
+google-transcriber-gemini-2.5-flash-preview-04-17-completionTokens	google-transcriber-gemini-2.5-flash-preview-04-17	SUM	completionTokens	0.0000025	0.000002250000000
+google-transcriber-gemini-2.5-flash-preview-04-17-promptTokens	google-transcriber-gemini-2.5-flash-preview-04-17	SUM	promptTokens	0.0000003	0.000000270000000
+google-transcriber-gemini-2.5-pro-preview-05-06-completionTokens	google-transcriber-gemini-2.5-pro-preview-05-06	SUM	completionTokens	0.00001	0.000009000000000
+google-transcriber-gemini-2.5-pro-preview-05-06-promptTokens	google-transcriber-gemini-2.5-pro-preview-05-06	SUM	promptTokens	0.00000125	0.000001125000000
+google-transcriber-gemini-2.5-pro-preview-06-05-completionTokens	google-transcriber-gemini-2.5-pro-preview-06-05	SUM	completionTokens	0.00001	0.000009000000000
+google-transcriber-gemini-2.5-pro-preview-06-05-promptTokens	google-transcriber-gemini-2.5-pro-preview-06-05	SUM	promptTokens	0.00000125	0.000001125000000
+google-transcriber-gemini-exp-1206-completionTokens	google-transcriber-gemini-exp-1206	SUM	completionTokens	0	
+google-transcriber-gemini-exp-1206-promptTokens	google-transcriber-gemini-exp-1206	SUM	promptTokens	0	
+google-transcriber-gemini-pro-completionTokens	google-transcriber-gemini-pro	SUM	completionTokens	0.0000015	
+google-transcriber-gemini-pro-promptTokens	google-transcriber-gemini-pro	SUM	promptTokens	0.0000005	
+google-transcriber-promptTokens	google-transcriber	SUM	promptTokens	0.0000001	
